@@ -1,0 +1,29 @@
+# audio
+*.wav
+*.flac
+*.mp3
+*.m4a
+
+# data and outputs
+data/raw/
+data/processed/
+outputs/
+checkpoints/
+
+# weights
+*.pth
+*.pt
+*.safetensors
+*.ckpt
+
+# secrets
+.env
+kaggle.json
+
+# python / notebooks / os
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+.venv/
+venv/
+env/

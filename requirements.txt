@@ -1,0 +1,8 @@
+# torch / torchaudio are not pinned: use the versions preinstalled on Kaggle.
+# coqui-tts needs torch>=2.2, and torchcodec too if torch is 2.9 or newer.
+# Pins below are provisional until scripts/env_check.py passes on a Kaggle T4.
+
+# idiap's maintained fork of Coqui TTS, latest on PyPI (Jan 2026)
+coqui-tts==0.27.5
+# coqui-tts asks for >=4.57 with no upper bound; last 4.x release, avoids untested 5.x changes
+transformers==4.57.6
