@@ -25,7 +25,13 @@ Take an existing pretrained TTS model and make it better at the things Indian vo
 
 ## Repo layout
 
-Will add this once the code is in.
+```
+benchmark/              fixed test set (benchmark.tsv) and what each column means
+scripts/env_check.py    checks XTTS-v2 loads and runs on a Kaggle T4
+scripts/check_overlap.py  makes sure no benchmark sentence is in the training text
+requirements.txt        pinned coqui-tts and transformers
+DAYS.md                 short daily log of what I did and why
+```
 
 ## Notes
 
