@@ -1,5 +1,6 @@
 {
-  "_note": "XTTS-v2 sampling settings, copied from the pretrained model's config.json (coqui/XTTS-v2 on Hugging Face). These are what the high-level TTS API uses. Every model we compare uses this same file.",
+  "_note": "Sampling values copied from XTTS-v2's own config.json (coqui/XTTS-v2 on Hugging Face), which is what the high-level TTS API uses. Every model we compare uses this file.",
+  "_python_defaults_differ": "Xtts.inference() and get_conditioning_latents() have different Python defaults in coqui-tts 0.27.5: repetition_penalty 10.0 (config: 5.0) and gpt_cond_len 6 (config: 30). We use the config values.",
   "temperature": 0.75,
   "length_penalty": 1.0,
   "repetition_penalty": 5.0,

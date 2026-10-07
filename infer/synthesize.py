@@ -1,8 +1,9 @@
 """Synthesise the benchmark with XTTS-v2 (pretrained or fine-tuned) and time it.
 
-For every benchmark row it writes <id>.wav and one line in manifest.jsonl with
-the text sent, language, audio length, wall time and RTF. With --stream it also
-measures time to first audio (TTFA) using XTTS streaming.
+For every benchmark row it writes <id>.wav and a row in manifest.csv:
+id, lang, xtts_lang, n_chars, text_in, text_used, audio_s, wall_s, rtf
+(plus ttfa_s with --stream: time to first audio using XTTS streaming).
+run_summary.json records model size on disk, peak VRAM and the stream chunk size.
 
 The voice comes from --ref (one or more of my reference recordings; the
 conditioning latents are computed once and reused for every sentence) or from
@@ -90,6 +91,8 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=1234)
     ap.add_argument("--sampling", default=str(ROOT / "configs" / "sampling.json"))
     ap.add_argument("--stream", action="store_true", help="also measure time to first audio")
+    ap.add_argument("--chunk-size", type=int, default=20,
+                    help="XTTS stream_chunk_size, in GPT tokens per streamed chunk (XTTS default 20)")
     ap.add_argument("--limit", type=int, help="only the first N rows (smoke tests)")
     ap.add_argument("--sentence", nargs=2, action="append", metavar=("LANG", "TEXT"),
                     help="use these sentences instead of the benchmark (smoke tests, repeatable)")
@@ -107,7 +110,9 @@ def main() -> None:
     if not rows:
         sys.exit(f"{args.benchmark} has no sentences yet.")
 
-    model = load_model(model_dir(args.model))
+    folder = model_dir(args.model)
+    model_mb = sum(f.stat().st_size for f in folder.rglob("*") if f.is_file()) / 1024**2
+    model = load_model(folder)
     sr = model.config.audio.output_sample_rate
     latent, embedding = conditioning(model, args.ref, args.speaker, settings)
     gen = {k: settings[k] for k in ("temperature", "length_penalty", "repetition_penalty",
@@ -121,7 +126,11 @@ def main() -> None:
     model.inference("Warm up.", "en", latent, embedding, **gen)
     torch.cuda.reset_peak_memory_stats()
 
-    with open(out / "manifest.jsonl", "w", encoding="utf-8") as manifest:
+    columns = ["id", "lang", "xtts_lang", "n_chars", "text_in", "text_used", "audio_s", "wall_s", "rtf"]
+    columns += ["ttfa_s"] if args.stream else []
+    with open(out / "manifest.csv", "w", encoding="utf-8", newline="") as f:
+        manifest = csv.DictWriter(f, fieldnames=columns)
+        manifest.writeheader()
         for row in rows:
             lang = XTTS_LANG[row["lang"]]
             text = prepare_text(row["text"], args.normalize == "on")
@@ -135,25 +144,31 @@ def main() -> None:
 
             seconds = len(wav) / sr
             sf.write(out / f"{row['id']}.wav", wav, sr)
-            entry = {"id": row["id"], "lang": lang, "text_sent": text,
-                     "seconds": round(seconds, 2), "wall": round(wall, 3),
-                     "rtf": round(wall / seconds, 3) if seconds else None}
+            entry = {"id": row["id"], "lang": row["lang"], "xtts_lang": lang, "n_chars": len(text),
+                     "text_in": row["text"], "text_used": text, "audio_s": round(seconds, 2),
+                     "wall_s": round(wall, 3), "rtf": round(wall / seconds, 3) if seconds else ""}
 
             if args.stream:
                 torch.manual_seed(args.seed)
                 torch.cuda.synchronize()
                 start = time.perf_counter()
-                stream = model.inference_stream(text, lang, latent, embedding, **gen)
+                stream = model.inference_stream(text, lang, latent, embedding,
+                                                stream_chunk_size=args.chunk_size, **gen)
                 next(stream)
                 torch.cuda.synchronize()
-                entry["ttfa"] = round(time.perf_counter() - start, 3)
+                entry["ttfa_s"] = round(time.perf_counter() - start, 3)
                 for _ in stream:  # drain so the next sentence starts clean
                     pass
 
-            manifest.write(json.dumps(entry, ensure_ascii=False) + "\n")
+            manifest.writerow(entry)
             print(entry, flush=True)
 
-    print(f"peak VRAM {torch.cuda.max_memory_allocated() / 1024**3:.2f} GB")
+    summary = {"model": args.model, "model_mb_on_disk": round(model_mb, 1),
+               "peak_vram_gb": round(torch.cuda.max_memory_allocated() / 1024**3, 2),
+               "stream_chunk_size": args.chunk_size if args.stream else None,
+               "gpu": torch.cuda.get_device_name(0), "n_rows": len(rows)}
+    json.dump(summary, open(out / "run_summary.json", "w"), indent=2)
+    print(summary)
     print(f"wrote {len(rows)} files to {out}")
 
 
