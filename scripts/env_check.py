@@ -2,10 +2,13 @@
 
 Prints library versions, loads XTTS-v2 on the GPU, synthesises one English
 and one Hindi sentence with a stock speaker, and reports wall time, RTF and
-peak VRAM. Audio goes to /kaggle/working/env_check/.
+peak VRAM. Then it loads a WAV back with torchaudio, because voice cloning
+reads reference recordings that way (torch 2.9+ needs torchcodec for it).
 
-Run on Kaggle:  python scripts/env_check.py
+Run on Kaggle:  python scripts/env_check.py [--out DIR]
+Default output dir: $OUT_DIR/env_check, or /kaggle/working/out/env_check.
 """
+import argparse
 import os
 import sys
 import time
@@ -17,7 +20,6 @@ from pathlib import Path
 os.environ["COQUI_TOS_AGREED"] = "1"
 
 MODEL = "tts_models/multilingual/multi-dataset/xtts_v2"
-OUT_DIR = Path("/kaggle/working/env_check")
 SPEAKER = "Ana Florence"  # stock XTTS speaker; falls back to the first one listed
 
 # Not in recording/prompts.tsv.
@@ -40,6 +42,10 @@ def pkg_version(name: str) -> str:
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--out", default=os.path.join(os.environ.get("OUT_DIR", "/kaggle/working/out"), "env_check"))
+    out_dir = Path(ap.parse_args().out)
+
     try:
         import soundfile as sf
         import torch
@@ -69,7 +75,7 @@ def main() -> None:
     sr = tts.synthesizer.output_sample_rate
     print(f"speaker       {speaker}  ({sr} Hz)\n")
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     try:
         # Warm-up: the first call pays one-off CUDA setup costs, so don't time it.
         tts.tts(text="Warm up.", speaker=speaker, language="en")
@@ -85,14 +91,23 @@ def main() -> None:
             duration = len(wav) / sr
             if duration == 0:
                 fail(f"empty audio for {lang}")
-            sf.write(OUT_DIR / f"{lang}.wav", wav, sr)
+            sf.write(out_dir / f"{lang}.wav", wav, sr)
             print(f"[{lang}] audio {duration:.2f}s  wall {wall:.2f}s  RTF {wall / duration:.2f}")
     except Exception as e:
         fail(f"synthesis error: {e}")
 
     peak_gb = torch.cuda.max_memory_allocated() / 1024**3
     print(f"\npeak VRAM     {peak_gb:.2f} GB")
-    print(f"saved to      {OUT_DIR}")
+
+    try:
+        import torchaudio
+
+        audio, rate = torchaudio.load(str(out_dir / "en.wav"))
+        print(f"torchaudio    {torchaudio.__version__}, loaded en.wav ({audio.shape[-1] / rate:.2f}s)")
+    except Exception as e:
+        fail(f"torchaudio could not load a wav (torchcodec missing or mismatched?): {e}")
+    print(f"torchcodec    {pkg_version('torchcodec')}")
+    print(f"saved to      {out_dir}")
     print("ENV CHECK PASSED")
 
 

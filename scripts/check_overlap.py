@@ -51,6 +51,9 @@ def capitalised_words(text: str) -> set[str]:
 
 
 def main() -> None:
+    import argparse
+
+    argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter).parse_args()
     bench = read_rows(BENCHMARK)
     prompts = read_rows(PROMPTS)
     prompt_norm = [(p["id"], p["text"], normalise(p["text"])) for p in prompts]
