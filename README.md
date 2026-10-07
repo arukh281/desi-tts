@@ -2,6 +2,8 @@
 
 Fine-tuning an open TTS model for Indian English, with Hindi / Hinglish support.
 
+Code and writing drafted with AI assistance; recordings, decisions and listening tests are mine.
+
 This is still a work in progress, so things will move around a bit. I'll keep updating this README as I go.
 
 ## What I'm trying to do
