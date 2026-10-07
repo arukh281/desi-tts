@@ -113,6 +113,9 @@ def main() -> None:
     ap.add_argument("--fp16", action="store_true")
     args = ap.parse_args()
 
+    # Kaggle's "T4 x2" exposes two GPUs and the coqui trainer refuses to guess;
+    # we train on one, so pin it before torch starts.
+    os.environ.setdefault("CUDA_VISIBLE_DEVICES", "0")
     import torch
     from trainer import Trainer, TrainerArgs
     from TTS.tts.datasets import load_tts_samples
