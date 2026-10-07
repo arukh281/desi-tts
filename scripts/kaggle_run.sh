@@ -21,7 +21,8 @@ if [[ $# -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
 fi
 
 RUN_NAME="$1"; SCRIPT="$2"; shift 2
-ARGS="$*"
+# Quote each arg so sentences with spaces survive the trip (POSIX quoting for Kaggle's /bin/sh).
+ARGS="$(python3 -c 'import shlex, sys; print(shlex.join(sys.argv[1:]))' "$@")"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 KAGGLE="${KAGGLE:-kaggle}"
 BRANCH="${BRANCH:-$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)}"
