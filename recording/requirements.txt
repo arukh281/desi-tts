@@ -1,0 +1,4 @@
+# Mac-only tools for recording (recording/record.py). No ML here.
+numpy
+sounddevice
+soundfile

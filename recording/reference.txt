@@ -1,0 +1,4 @@
+lang	text
+en	Thanks for waiting. I have pulled up your details and I can help you with that right away.
+hinglish	Aapki request humne note kar li hai, aur hamari team kal tak aapko call karegi.
+hi	आपकी शिकायत दर्ज हो गई है, और हम जल्दी ही आपसे संपर्क करेंगे।
