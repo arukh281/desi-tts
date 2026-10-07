@@ -70,14 +70,14 @@ def conditioning(model, refs: list[str] | None, speaker: str | None, s: dict):
     )
 
 
-def prepare_text(text: str, normalize: bool) -> str:
+def prepare_text(text: str, lang: str, normalize: bool) -> str:
+    """With --normalize on, rewrite ₹, numbers, dates, times and acronyms into spoken form."""
     if not normalize:
         return text
-    try:
-        from text.normalize import normalize as norm  # built later (the Part 7 fix)
-    except ImportError:
-        sys.exit("--normalize on, but text/normalize.py doesn't exist yet. Use --normalize off.")
-    return norm(text)
+    sys.path.insert(0, str(ROOT))
+    from text.normalize import normalize as to_spoken
+
+    return to_spoken(text, lang)[0]
 
 
 def main() -> None:
@@ -133,7 +133,7 @@ def main() -> None:
         manifest.writeheader()
         for row in rows:
             lang = XTTS_LANG[row["lang"]]
-            text = prepare_text(row["text"], args.normalize == "on")
+            text = prepare_text(row["text"], row["lang"], args.normalize == "on")
             torch.manual_seed(args.seed)  # same seed per sentence, for every model
 
             torch.cuda.synchronize()
