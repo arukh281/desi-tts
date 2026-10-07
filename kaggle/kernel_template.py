@@ -12,7 +12,7 @@ Not meant to be run by hand.
 """
 import json
 import os
-import shlex
+import shutil
 import subprocess
 import sys
 import time
@@ -45,6 +45,7 @@ def run(cmd: str, cwd: str | None = None, env: dict | None = None) -> int:
 
 
 def finish(code: int, reason: str = "") -> None:
+    shutil.rmtree(REPO, ignore_errors=True)  # don't download the repo back with the outputs
     info["exit_code"] = code
     info["reason"] = reason
     info["finished"] = time.strftime("%Y-%m-%d %H:%M:%S")
