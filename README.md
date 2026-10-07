@@ -26,11 +26,17 @@ Take an existing pretrained TTS model and make it better at the things Indian vo
 ## Repo layout
 
 ```
-benchmark/              fixed test set (benchmark.tsv) and what each column means
-scripts/env_check.py    checks XTTS-v2 loads and runs on a Kaggle T4
-scripts/check_overlap.py  makes sure no benchmark sentence is in the training text
-requirements.txt        pinned coqui-tts and transformers
-DAYS.md                 short daily log of what I did and why
+benchmark/                  fixed test set (benchmark.tsv) and what each column means
+configs/sampling.json       XTTS sampling settings, the same for every model compared
+infer/synthesize.py         synthesises the benchmark and times it (RTF, time to first audio)
+kaggle/kernel_template.py   Kaggle kernel that runs one repo script at an exact commit
+recording/                  my recording tool (Mac), recording order, reference sentences
+scripts/env_check.py        checks XTTS-v2 loads and runs on a Kaggle T4
+scripts/check_overlap.py    makes sure no benchmark sentence is in the training text
+scripts/kaggle_run.sh       pushes a script to a private Kaggle T4 run and downloads the output
+tests/                      unit tests for the recording logic
+requirements.txt            pinned coqui-tts and transformers
+DAYS.md                     short daily log of what I did and why
 ```
 
 ## Notes
