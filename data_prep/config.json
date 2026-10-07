@@ -1,0 +1,35 @@
+{
+  "_note": "All data-prep thresholds in one place. 'drop' removes a clip from training; 'flag' keeps it but lists it in keep_drop.csv for a listen.",
+  "master_sample_rate": 48000,
+  "train_sample_rate": 22050,
+  "min_seconds": 1.0,
+  "max_seconds": 11.6,
+  "clip_level": 0.99,
+  "clip_drop_samples": 20,
+  "clip_flag_samples": 1,
+  "min_peak_dbfs": -30.0,
+  "snr_drop_db": 20.0,
+  "snr_flag_db": 30.0,
+  "frame_ms": 10,
+  "active_above_floor_db": 15.0,
+  "edge_window_s": 0.2,
+  "click_max_ms": 40,
+  "trim_pad_s": 0.15,
+  "pause_flag_s": 1.0,
+  "pause_drop_s": 2.0,
+  "loudness_lufs": -23.0,
+  "peak_ceiling_dbfs": -1.0,
+  "cer_flag": {
+    "en": 0.05,
+    "hinglish": 0.2,
+    "hi": 0.1
+  },
+  "cer_drop": {
+    "en": 0.15,
+    "hinglish": 0.45,
+    "hi": 0.25
+  },
+  "val_fraction": 0.05,
+  "seed": 1234,
+  "_cer_note": "CER is per language group. Hinglish is checked with Whisper forced to English, which spells Hindi words inconsistently, so its limits are loose. Recalibrate all three from the session 1 CER histogram."
+}

@@ -1,0 +1,5 @@
+# Mac-only, for data_prep/prepare.py, finalize.py, dataset_card.py. No ML.
+numpy
+soundfile
+scipy
+pyloudnorm
