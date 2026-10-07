@@ -1,1 +1,89 @@
 id	lang	category	tags	text	check
+b001	en	conversational		Hi, thanks for calling. Give me a moment while I pull up your account.	
+b002	en	conversational		Sorry about the wait, the system was a little slow just now.	
+b003	en	conversational		Sure, I can help with that. Could you hold for about two minutes?	
+b004	en	conversational		That's done. You should get a confirmation message on your phone shortly.	
+b005	en	conversational	numbers	Please confirm the last four digits of your account number.	
+b006	en	conversational		Before we go ahead, I just need to verify a couple of details.	
+b007	en	conversational		Got it, so the parcel was marked delivered but you never received it.	
+b008	en	conversational		Thank you for your patience, and have a great evening.	
+b009	en	names	seen	Hello, is this Venkatesh Iyer speaking?	Venkatesh Iyer
+b010	en	names	seen	Lakshmi Banerjee has been added as the nominee on this policy.	Lakshmi Banerjee
+b011	en	names	seen	Your relationship manager, Anjali Reddy, will call you back before six.	Anjali Reddy
+b012	en	names	seen	The cheque was issued in the name of Sunita Kulkarni.	Sunita Kulkarni
+b013	en	names	unseen	Your complaint has been assigned to Chaitanya Deshpande from our escalations team.	Chaitanya Deshpande
+b014	en	names	unseen	Please ask Fatima Shaikh to sign the form at the branch.	Fatima Shaikh
+b015	en	names	unseen	The delivery partner, Gurpreet Kaur, is about ten minutes away.	Gurpreet Kaur
+b016	en	names	unseen	A joint account for Srinivasan Raghunathan and Bhuvaneshwari Raghunathan needs both signatures.	Srinivasan Raghunathan; Bhuvaneshwari Raghunathan
+b017	en	places	seen	Your order is out for delivery from our Koramangala hub.	Koramangala
+b018	en	places	seen	The nearest branch to you is in Thiruvananthapuram, near the central bus stand.	Thiruvananthapuram
+b019	en	places	seen	Your train ticket from Guwahati has been rebooked.	Guwahati
+b020	en	places	unseen	We do deliver to Visakhapatnam, usually within three working days.	Visakhapatnam
+b021	en	places	unseen,acronyms	Your new SIM card will be dispatched to the Tirunelveli address on file.	SIM = S I M; Tirunelveli
+b022	en	places	unseen	There is a network outage in parts of Hubballi and Dharwad right now.	Hubballi; Dharwad
+b023	en	numbers		Your one-time password is 482913.	482913 = four eight two nine one three
+b024	en	numbers		Please call us back on 9876543210.	9876543210 = nine eight seven six five four three two one zero
+b025	en	numbers		Your ticket number is 50317.	50317 = five zero three one seven
+b026	en	numbers		You have 3 missed payments on this card.	3 = three
+b027	en	numbers	acronyms	Your data balance is 1.5 GB for the rest of the day.	1.5 GB = one point five G B
+b028	en	numbers		Delivery was attempted twice, and the 3rd attempt is scheduled for tomorrow.	3rd = third
+b029	en	numbers	questions	Your pincode is 560034, is that correct?	560034 = five six zero zero three four
+b030	en	numbers		Please confirm your flat number, 1204, for the delivery.	1204 = one two zero four
+b031	en	dates_times		Your appointment is scheduled for 4:30 PM.	4:30 PM = four thirty in the afternoon
+b032	en	dates_times		The payment was received on 03/10/2026.	03/10/2026 = the third of October twenty twenty six (DD/MM)
+b033	en	dates_times		Your plan renews on 15th August.	15th August = the fifteenth of August
+b034	en	dates_times		Branch hours are 9:30 AM to 4 PM on weekdays.	9:30 AM = nine thirty in the morning; 4 PM = four in the afternoon
+b035	en	dates_times		The outage should be fixed by 11:45 tonight.	11:45 = eleven forty five
+b036	en	dates_times		Your policy expires on 31 Dec 2026.	31 Dec 2026 = the thirty first of December twenty twenty six
+b037	en	currency	acronyms	Your EMI of ₹12,750 is due tomorrow.	₹12,750 = twelve thousand seven hundred and fifty rupees; EMI = E M I
+b038	en	currency		A refund of ₹1,25,000 has been initiated.	₹1,25,000 = one lakh twenty five thousand rupees
+b039	en	currency		Your outstanding balance is Rs. 4,999.50.	Rs. 4,999.50 = four thousand nine hundred and ninety nine rupees and fifty paise
+b040	en	currency	acronyms	The processing fee is ₹499 plus GST.	₹499 = four hundred and ninety nine rupees; GST = G S T
+b041	en	currency		Your loan of ₹2.5 lakh has been approved.	₹2.5 lakh = two point five lakh rupees
+b042	en	currency		The sanctioned limit is ₹1.2 crore.	₹1.2 crore = one point two crore rupees
+b043	en	currency		A late fee of ₹750 has been added to your bill.	₹750 = seven hundred and fifty rupees
+b044	en	currency		You'll get cashback of ₹50 on your next recharge.	₹50 = fifty rupees
+b045	en	acronyms		Your KYC verification has been completed.	KYC = K Y C
+b046	en	acronyms		Please share the OTP sent to your registered number.	OTP = O T P
+b047	en	acronyms		Your UPI ID has been linked successfully.	UPI ID = U P I I D
+b048	en	acronyms		Please upload a copy of your PAN card.	PAN = P A N
+b049	en	acronyms	numbers	The NEFT transfer will reflect within 2 hours.	NEFT = N E F T; 2 = two
+b050	en	acronyms		Your SBI account has been mapped for auto-debit.	SBI = S B I
+b051	en	acronyms	numbers	For faster support, use the IVR menu and press 2.	IVR = I V R; 2 = two
+b052	en	acronyms	numbers	The ATM card ending in 4421 has been blocked.	ATM = A T M; 4421 = four four two one
+b053	en	questions	acronyms	Would you like me to send the details on SMS?	SMS = S M S
+b054	en	questions		Could you tell me your date of birth for verification?	
+b055	en	questions		Do you want us to go ahead and cancel the order?	
+b056	en	questions		Is the delivery address still the same?	
+b057	en	questions		How would you rate your experience today?	
+b058	en	long	numbers,dates_times	As per our records your last three payments were made after the due date, so a small penalty has been added, but if you clear the full amount by the 20th it will be waived.	20th = twentieth
+b059	en	long		Your replacement phone has been dispatched and should reach you in four to five working days; once it arrives, please keep the old device ready, because our delivery partner will collect it at the door.	
+b060	en	long	acronyms	To reset your net banking password, open the app, tap on forgot password, enter your customer ID and the OTP we send you, and then choose a new password that you have not used before.	ID = I D; OTP = O T P
+b061	hinglish	conversational		Aapka payment successfully receive ho gaya hai.	
+b062	hinglish	currency	acronyms	Aapka EMI ₹8,500 ka hai aur kal due hai.	₹8,500 = aath hazaar paanch sau rupaye; EMI = E M I
+b063	hinglish	dates_times		Aapka order 4 baje tak deliver ho jayega.	4 baje = chaar baje
+b064	hinglish	questions	acronyms	Kya aap apna OTP share kar sakte hain?	OTP = O T P
+b065	hinglish	currency		Aapke account mein ₹2,340 ka cashback credit ho gaya hai.	₹2,340 = do hazaar teen sau chaalis rupaye
+b066	hinglish	numbers		Aapki complaint number 77812 register ho gayi hai.	77812 = saat saat aath ek do
+b067	hinglish	names	unseen,acronyms	Rahul ji, aapka KYC abhi pending hai.	Rahul; KYC = K Y C
+b068	hinglish	places	seen	Hamari Pune wali branch kal band rahegi.	Pune
+b069	hinglish	numbers		Agar network issue hai toh aap 198 pe call kariye.	198 = ek nau aath
+b070	hinglish	numbers	dates_times	Aapka recharge 28 din ke liye valid hai.	28 = atthaais
+b071	hinglish	names	seen	Sunita ji, aapki policy ka renewal kal tak karna hoga.	Sunita
+b072	hinglish	names	unseen	Mohammed Irfan ke naam se ek parcel aaya hai.	Mohammed Irfan
+b073	hinglish	numbers	acronyms	Aapka OTP 590214 hai, ise kisi ko mat bataiye.	OTP = O T P; 590214 = paanch nau zero do ek chaar
+b074	hinglish	dates_times		Aapka plan 15/11/2026 ko expire ho jayega.	15/11/2026 = pandrah November do hazaar chhabbees (DD/MM)
+b075	hinglish	questions	dates_times	Kya aap chahenge ki main 6:30 baje dobara phone karoon?	6:30 baje = saadhe chhe baje
+b076	hinglish	long	numbers	Aapka replacement order humne aaj subah place kar diya hai, aur agar kal shaam tak delivery nahi hoti toh aap isi number par dobara call karke apna complaint number 48213 bata dijiye.	48213 = chaar aath do ek teen
+b077	hi	currency		आपका ₹5,000 का भुगतान सफल रहा।	₹5,000 = पाँच हज़ार रुपये
+b078	hi	dates_times		आपकी अपॉइंटमेंट कल सुबह 10:30 बजे है।	10:30 बजे = साढ़े दस बजे
+b079	hi	acronyms		OTP कभी भी फ़ोन पर किसी को मत बताइए।	OTP = ओ टी पी
+b080	hi	questions		क्या आपका डिलीवरी का पता अब भी वही है?	
+b081	hi	places	seen	आपका पार्सल जयपुर से निकल चुका है।	जयपुर
+b082	hi	currency		आपके खाते में ₹1,50,000 जमा हो गए हैं।	₹1,50,000 = एक लाख पचास हज़ार रुपये
+b083	hi	names	seen,dates_times	वेंकटेश जी, आपकी डिलीवरी आज 8 बजे से पहले हो जाएगी।	वेंकटेश; 8 बजे = आठ बजे
+b084	hi	names	unseen	सुखविंदर सिंह के नाम पर नया कार्ड जारी कर दिया गया है।	सुखविंदर सिंह
+b085	hi	numbers		आपका टिकट नंबर 40917 है, इसे लिख लीजिए।	40917 = चार ज़ीरो नौ एक सात
+b086	hi	numbers		आपकी अभी 3 किस्तें बाकी हैं।	3 = तीन
+b087	hi	dates_times		आपकी पॉलिसी 31/03/2027 को खत्म हो जाएगी।	31/03/2027 = इकतीस मार्च दो हज़ार सत्ताईस (DD/MM)
+b088	hi	long	dates_times	अगर आपको कल सुबह 9:15 बजे तक कोई मैसेज नहीं मिलता है, तो हमारे हेल्पलाइन नंबर पर कॉल कीजिए और अपना रजिस्टर्ड मोबाइल नंबर बताइए, ताकि हम आपकी मदद कर सकें।	9:15 बजे = सवा नौ बजे
