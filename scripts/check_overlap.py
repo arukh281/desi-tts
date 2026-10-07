@@ -2,8 +2,11 @@
 
 Compares benchmark/benchmark.tsv against recording/prompts.tsv.
   FAIL  exact matches and near-duplicates (difflib ratio >= 0.8)
-  WARN  capitalised words (names, places) that appear in both files, so I can
-        decide which benchmark names count as "seen" vs "unseen" in training
+  WARN  names and places that appear in both files, so I can decide which
+        benchmark names count as "seen" vs "unseen" in training.
+        Roman script: capitalised words, ignoring "I". Devanagari has no capitals,
+        so Devanagari words are transliterated and fuzzy-matched against the
+        names found in the prompts (catches जयपुर ~ Jaipur).
 
 Run:  python scripts/check_overlap.py
 Exits 0 when there are no failures.
@@ -19,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BENCHMARK = ROOT / "benchmark" / "benchmark.tsv"
 PROMPTS = ROOT / "recording" / "prompts.tsv"
 NEAR_DUP = 0.8
+NAME_MATCH = 0.75  # transliterated Devanagari word vs a Roman name from the prompts
 
 # string.punctuation is ASCII only, so add the Devanagari danda and curly quotes.
 PUNCT = string.punctuation + "।॥“”‘’"
@@ -36,18 +40,62 @@ def normalise(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-def capitalised_words(text: str) -> set[str]:
-    """Capitalised words that don't start a sentence: likely names and places."""
+def capitalised_words(text: str, skip_initial: bool = True) -> set[str]:
+    """Capitalised words, likely names and places. "I" is never a name.
+
+    For prompts we skip sentence-initial words, so ordinary sentence starters
+    ("Please", "Your") never enter the list of training names.
+    """
     words = set()
     tokens = text.split()
     for i, tok in enumerate(tokens):
         word = tok.strip(PUNCT)
-        if not word or not word[0].isupper():
+        if len(word) < 2 or not word[0].isupper() or word.isupper():  # skips "I" and acronyms/letters
             continue
-        if i == 0 or tokens[i - 1][-1] in ".?!":
+        if skip_initial and (i == 0 or tokens[i - 1][-1] in ".?!"):
             continue
         words.add(word)
     return words
+
+
+# Rough Devanagari -> Latin, only good enough to match names like जयपुर ~ jaipur.
+CONSONANTS = dict(zip("कखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह",
+                      ["k", "kh", "g", "gh", "n", "ch", "chh", "j", "jh", "n", "t", "th", "d", "dh", "n",
+                       "t", "th", "d", "dh", "n", "p", "ph", "b", "bh", "m", "y", "r", "l", "v", "sh", "sh", "s", "h"]))
+VOWEL_SIGNS = dict(zip("ािीुूृेैोौ", ["a", "i", "i", "u", "u", "ri", "e", "ai", "o", "au"]))
+VOWELS = dict(zip("अआइईउऊऋएऐओऔ", ["a", "a", "i", "i", "u", "u", "ri", "e", "ai", "o", "au"]))
+
+
+def transliterate(word: str) -> str:
+    out = []
+    for i, ch in enumerate(word):
+        nxt = word[i + 1] if i + 1 < len(word) else ""
+        if ch in CONSONANTS:
+            out.append(CONSONANTS[ch])
+            if nxt not in VOWEL_SIGNS and nxt != "्" and nxt:  # inherent 'a', dropped at word end
+                out.append("a")
+        elif ch in VOWEL_SIGNS:
+            out.append(VOWEL_SIGNS[ch])
+        elif ch in VOWELS:
+            out.append(VOWELS[ch])
+        elif ch in "ंँ":
+            out.append("n")
+    return "".join(out)
+
+
+def devanagari_name_matches(text: str, names: set[str]) -> set[str]:
+    hits = set()
+    for tok in text.split():
+        word = tok.strip(PUNCT)
+        if not word or not ("\u0900" <= word[0] <= "\u097f"):
+            continue
+        roman = transliterate(word)
+        if len(roman) < 5:  # short common words (agar, vahi, shaam) match names by accident
+            continue
+        for name in names:
+            if SequenceMatcher(None, roman, name.lower()).ratio() >= NAME_MATCH:
+                hits.add(f"{word}~{name}")
+    return hits
 
 
 def main() -> None:
@@ -74,14 +122,16 @@ def main() -> None:
     for p in prompts:
         for w in capitalised_words(p["text"]):
             prompt_caps.setdefault(w, []).append(p["id"])
+    names = set(prompt_caps)
     shared = sorted(
-        {(w, b["id"]) for b in bench for w in capitalised_words(b["text"]) if w in prompt_caps}
+        {(w, b["id"]) for b in bench for w in capitalised_words(b["text"], skip_initial=False) if w in names}
+        | {(w, b["id"]) for b in bench for w in devanagari_name_matches(b["text"], names)}
     )
 
     for kind, bid, btext, pid, ptext in failures:
         print(f"FAIL {kind}\n  {bid}: {btext}\n  {pid}: {ptext}")
     for w, bid in shared:
-        ids = prompt_caps[w]
+        ids = prompt_caps[w.split("~")[-1]]
         print(f"WARN '{w}' in {bid} also appears in training ({len(ids)}x, e.g. {ids[0]})")
 
     print(f"\n{len(bench)} benchmark rows vs {len(prompts)} prompts: "
