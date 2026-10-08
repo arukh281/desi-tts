@@ -33,12 +33,16 @@ class SyntheticSession(unittest.TestCase):
         run(str(ROOT / "data_prep" / "make_synthetic.py"), "--out", str(t))
         run(str(ROOT / "data_prep" / "prepare.py"), "--raw", str(t / "raw"),
             "--prompts", str(t / "prompts.tsv"), "--out", str(t / "processed"))
-        # Stand-in for the Whisper check: syn_wrong "heard" a different sentence.
+        # Stand-in for the Whisper check: every clip is "heard" correctly except
+        # syn_wrong. finalize.py re-scores CER from these hypotheses itself.
+        with open(t / "prompts.tsv", encoding="utf-8") as f:
+            texts = {r["id"]: r["text"] for r in csv.DictReader(f, delimiter="\t")}
         with open(t / "processed" / "asr.csv", "w", newline="") as f:
             w = csv.writer(f)
             w.writerow(["id", "hypothesis", "cer"])
             for clip in EXPECTED:
-                w.writerow([clip, "something else", 0.8 if clip == "syn_wrong" else 0.0])
+                hyp = "the weather is nice today" if clip == "syn_wrong" else texts[clip]
+                w.writerow([clip, hyp, ""])
         run(str(ROOT / "data_prep" / "finalize.py"), "--processed", str(t / "processed"))
         with open(t / "processed" / "keep_drop.csv", encoding="utf-8") as f:
             cls.result = {r["id"]: r for r in csv.DictReader(f)}

@@ -145,7 +145,12 @@ CURRENCY = re.compile(r"(?:₹\s?|\bRs\.?\s?|\bINR\s?)" + AMOUNT + r"(?:\s?(lakh
 DATE_NUM = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
 DATE_ORD = re.compile(r"\b(\d{1,2})(?:st|nd|rd|th)?\s+(" + "|".join(MONTHS_EN) + r"|"
                       + "|".join(m[:3] for m in MONTHS_EN) + r")\b(?:\s+(\d{4}))?")
-TIME_12 = re.compile(r"\b(\d{1,2})(?::(\d{2}))?\s?(AM|PM|am|pm|a\.m\.|p\.m\.)")
+TIME_12 = re.compile(r"\b(\d{1,2})(?:[:.](\d{2}))?\s?(AM|PM|am|pm|a\.m\.|p\.m\.)")
+# Whisper writes times as "10.30 in the morning" and amounts as "5000 rupees".
+TIME_DOT = re.compile(r"\b(\d{1,2})\.(\d{2})\b(?=\s+(?:in the|this|tonight|at night|baje|बजे))")
+# Python's \b doesn't see the end of Devanagari words ending in a vowel sign, so look ahead instead.
+AMOUNT_WORD = re.compile(r"\b" + AMOUNT + r"\s?(rupees|rupee|rupaye|rupay|रुपये|रुपए|रुपे)(?=[\s.,!?।]|$)", re.I)
+GROUPED = re.compile(r"\b\d{1,3}(?:,\d{2,3})+\b")
 TIME_24 = re.compile(r"\b(\d{1,2}):(\d{2})\b")
 BAJE = re.compile(r"\b(\d{1,2})(?::(\d{2}))?\s?(baje|बजे)")
 LONG_DIGITS = re.compile(r"\b\d{4,}\b")
@@ -225,6 +230,8 @@ def normalize(text: str, lang: str = "en") -> tuple[str, list[tuple[str, str]]]:
         text = pattern.sub(repl, text)
 
     sub(CURRENCY, lambda m: say_amount(m.group(1), m.group(2), m.group(3), lang))
+    sub(AMOUNT_WORD, lambda m: say_amount(m.group(1), m.group(2), None, lang))
+    sub(GROUPED, lambda m: number_words(int(m.group(0).replace(",", "")), lang))
     sub(PERCENT, lambda m: (decimal_words(m.group(1), lang) if "." in m.group(1)
                             else number_words(int(m.group(1)), lang))
         + (" per cent" if lang == "en" else " pratishat" if lang == "hinglish" else " प्रतिशत"))
@@ -254,6 +261,8 @@ def normalize(text: str, lang: str = "en") -> tuple[str, list[tuple[str, str]]]:
         return f"{clock_en(hour, minute)} {day_period(hour24)}"
 
     sub(TIME_12, time_12)
+    sub(TIME_DOT, lambda m: clock_en(int(m.group(1)), int(m.group(2))) if lang == "en"
+        else clock_hindi(int(m.group(1)), int(m.group(2)), lang))
     sub(BAJE, lambda m: f"{clock_hindi(int(m.group(1)), int(m.group(2) or 0), 'hi' if lang == 'hi' else 'hinglish')} {m.group(3)}")
     sub(TIME_24, lambda m: clock_en(int(m.group(1)), int(m.group(2))) if lang == "en"
         else clock_hindi(int(m.group(1)), int(m.group(2)), lang))

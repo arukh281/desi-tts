@@ -21,15 +21,15 @@
   "peak_ceiling_dbfs": -1.0,
   "cer_flag": {
     "en": 0.05,
-    "hinglish": 0.2,
-    "hi": 0.1
+    "hinglish": null,
+    "hi": 0.15
   },
   "cer_drop": {
     "en": 0.15,
-    "hinglish": 0.45,
-    "hi": 0.25
+    "hinglish": null,
+    "hi": 0.35
   },
   "val_fraction": 0.05,
   "seed": 1234,
-  "_cer_note": "CER is per language group. Hinglish is checked with Whisper forced to English, which spells Hindi words inconsistently, so its limits are loose. Recalibrate all three from the session 1 CER histogram."
+  "_cer_note": "CER per language group, recomputed in finalize.py from Whisper's raw text. Session 1 showed that Whisper forced to English TRANSLATES Hinglish into English, so Hinglish CER measures nothing: it is reported but never used to flag or drop (null). Hindi limits were loosened after session 1, where most Hindi 'errors' were Whisper spelling variants (रुपे/रुपये, अठारा/अठारह)."
 }

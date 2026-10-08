@@ -54,6 +54,15 @@ class English(unittest.TestCase):
         self.assertEqual(say("PAN and PIN"), "P A N and P I N")  # prompts.tsv spells both out
         self.assertEqual(say("I am OK"), "I am O K")  # single "I" is left alone
 
+    def test_asr_style_numbers(self):
+        # how Whisper writes things back, so CER compares like with like
+        self.assertEqual(say("5000 rupees"), "five thousand rupees")
+        self.assertEqual(say("Rs 2,000"), "two thousand rupees")
+        self.assertEqual(say("1,82,400 rupees"), "one lakh eighty two thousand four hundred rupees")
+        self.assertEqual(say("at 10.30 in the morning"), "at ten thirty in the morning")
+        self.assertEqual(say("at 7.40 pm"), "at seven forty in the evening")
+        self.assertEqual(say("10,000 रुपे", "hi"), "दस हज़ार रुपये")
+
     def test_rewrites_are_listed(self):
         text, rewrites = normalize("Your EMI of ₹50 is due.", "en")
         self.assertEqual(rewrites, [("₹50", "fifty rupees"), ("EMI", "E M I")])

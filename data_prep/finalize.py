@@ -28,7 +28,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "recording"))
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "data_prep"))
+sys.path.insert(0, str(ROOT / "eval"))
 
+from asr_common import cer as char_error_rate  # noqa: E402
+from asr_common import score_text  # noqa: E402
 from check_overlap import NEAR_DUP, normalise  # noqa: E402
 from order import language_group  # noqa: E402
 from prepare import CONFIG, load_config  # noqa: E402
@@ -58,12 +61,17 @@ def apply_asr(clip: dict, asr: dict | None, cfg: dict) -> None:
         reasons.append("asr_not_run")
         status = "flag" if status == "keep" else status
     else:
-        cer, group = float(asr["cer"]), clip["group"]
-        clip["cer"], clip["asr_text"] = asr["cer"], asr["hypothesis"]
-        if cer > cfg["cer_drop"][group]:
+        # Re-score from Whisper's raw text with the current normaliser, so a
+        # scoring fix doesn't need another GPU run.
+        group = clip["group"]
+        cer = char_error_rate(score_text(clip["text"], group), score_text(asr["hypothesis"], group))
+        clip["cer"], clip["asr_text"] = f"{cer:.3f}", asr["hypothesis"]
+        if cfg["cer_drop"][group] is None:
+            pass  # no reliable transcript check for this group (see config.json)
+        elif cer > cfg["cer_drop"][group]:
             reasons.append(f"transcript_mismatch cer {cer:.2f}")
             status = "drop"
-        elif cer > cfg["cer_flag"][group]:
+        elif cfg["cer_flag"][group] is not None and cer > cfg["cer_flag"][group]:
             reasons.append(f"transcript_borderline cer {cer:.2f}")
             status = "flag" if status == "keep" else status
     clip["status"], clip["reasons"] = status, "; ".join(reasons)
