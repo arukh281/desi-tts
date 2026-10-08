@@ -158,6 +158,7 @@ def main() -> None:
         save_step=args.save_step,
         save_n_checkpoints=args.keep,
         save_checkpoints=True,
+        save_best_after=10**9,  # no per-epoch best_model_*.pth: each is ~5 GB and fills Kaggle's disk
         run_eval=True,
         run_eval_steps=args.eval_step,
         print_eval=True,
@@ -191,9 +192,12 @@ def main() -> None:
         run_dirs = [p for p in Path(args.resume).rglob("config.json") if any(p.parent.glob("checkpoint_*.pth"))]
         if not run_dirs:
             raise SystemExit(f"no checkpoint_*.pth with a config.json under {args.resume}")
-        continue_path = out / run_dirs[0].parent.name
-        if Path(run_dirs[0].parent).resolve() != continue_path.resolve():
-            shutil.copytree(run_dirs[0].parent, continue_path, dirs_exist_ok=True)
+        source = run_dirs[0].parent
+        if os.access(source, os.W_OK):
+            continue_path = source  # same session: keep training in place, no 5 GB copy
+        else:
+            continue_path = out / source.name  # e.g. /kaggle/input is read-only
+            shutil.copytree(source, continue_path, dirs_exist_ok=True)
         print(f"resuming from {continue_path}")
 
     log = LossLog(out / "losses.csv")

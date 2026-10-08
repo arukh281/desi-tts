@@ -45,7 +45,7 @@ def main() -> None:
     run("data_prep/asr_check.py", "--processed", str(data), "--out", str(out / "asr"))
     run("train/train_gpt.py", "--out", str(a), "--max-steps", str(args.steps_a), *common)
     run("train/train_gpt.py", "--out", str(b), "--max-steps", str(args.steps_b), "--resume", str(a), *common)
-    run("train/export.py", "--run", str(b), "--out", str(export))
+    run("train/export.py", "--run", json.load(open(b / "train_summary.json"))["run_dir"], "--out", str(export))
     run("infer/synthesize.py", "--model", str(export), "--speaker", "Ana Florence",
         "--benchmark", "infer/fixture.tsv", "--out", str(out / "synth_after"))
 
