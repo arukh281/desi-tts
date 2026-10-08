@@ -11,7 +11,7 @@
 #   KAGGLE   path to the kaggle CLI (default: kaggle on PATH)
 #   TIMEOUT  max run time in seconds (default: 2400 = 40 min)
 #   DATASETS space-separated private Kaggle datasets to attach, e.g. "desi-tts-own-voice"
-#            (mounted read-only at /kaggle/input/<name>/)
+#            (scripts see each one at /tmp/in/<name>/)
 #
 # Output lands in outputs/kaggle/<run_name>/ (gitignored), including
 # out/run_info.json with the exact SHA that ran.
@@ -45,11 +45,12 @@ WORK="$(mktemp -d)"
 OUT="$ROOT/outputs/kaggle/$RUN_NAME"
 
 # Fill in the template. ARGS goes through Python so quotes can't break the file.
-python3 - "$ROOT/kaggle/kernel_template.py" "$WORK/kernel.py" "$BRANCH" "$SHA" "$SCRIPT" "$ARGS" <<'EOF'
+python3 - "$ROOT/kaggle/kernel_template.py" "$WORK/kernel.py" "$BRANCH" "$SHA" "$SCRIPT" "$ARGS" "$DATASETS" <<'EOF'
 import sys
-src, dst, branch, sha, script, args = sys.argv[1:]
+src, dst, branch, sha, script, args, datasets = sys.argv[1:]
 text = open(src).read()
-for key, value in {"__BRANCH__": branch, "__SHA__": sha, "__SCRIPT__": script, "__ARGS__": args}.items():
+for key, value in {"__BRANCH__": branch, "__SHA__": sha, "__SCRIPT__": script, "__ARGS__": args,
+                   "__DATASETS__": datasets}.items():
     text = text.replace(f'"{key}"', repr(value))
 open(dst, "w").write(text)
 EOF

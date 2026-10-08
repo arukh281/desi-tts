@@ -5,8 +5,10 @@ file as a private Kaggle kernel. On Kaggle it:
   1. checks the GPU is a T4 (stops otherwise)
   2. clones the repo at the given branch and checks out the exact commit SHA
   3. installs requirements.txt (on top of Kaggle's own torch)
-  4. runs the script with COQUI_TOS_AGREED=1 and OUT_DIR=/kaggle/working/out
-  5. writes out/run_info.json (SHA, script, args, GPU, exit code) and out/log.txt
+  4. links each attached dataset to /tmp/in/<name> (Kaggle's mount layout
+     changes over time, so scripts get one fixed path)
+  5. runs the script with COQUI_TOS_AGREED=1 and OUT_DIR=/kaggle/working/out
+  6. writes out/run_info.json (SHA, script, args, GPU, exit code) and out/log.txt
 
 Not meant to be run by hand.
 """
@@ -16,11 +18,13 @@ import shutil
 import subprocess
 import sys
 import time
+from pathlib import Path
 
 BRANCH = "__BRANCH__"
 SHA = "__SHA__"
 SCRIPT = "__SCRIPT__"
 ARGS = "__ARGS__"
+DATASETS = "__DATASETS__"
 
 REPO_URL = "https://github.com/arukh281/desi-tts.git"
 REPO = "/kaggle/working/desi-tts"
@@ -74,6 +78,16 @@ info["sha_checked_out"] = subprocess.run("git rev-parse HEAD", shell=True, cwd=R
 if run("pip install -q -r requirements.txt", cwd=REPO) != 0:
     finish(4, "pip install failed")
 run("pip list 2>/dev/null | grep -i -E '^(torch|torchaudio|torchcodec|coqui-tts|transformers) '")
+
+os.makedirs("/tmp/in", exist_ok=True)
+for name in DATASETS.split():
+    found = sorted((p for p in Path("/kaggle/input").rglob(name) if p.is_dir()), key=lambda p: len(p.parts))
+    if not found:
+        run("find /kaggle/input -maxdepth 4")
+        finish(5, f"dataset {name} not found under /kaggle/input")
+    os.symlink(found[0], f"/tmp/in/{name}")
+    print(f"dataset {name}: {found[0]} -> /tmp/in/{name}")
+info["datasets"] = DATASETS
 
 env = dict(os.environ, COQUI_TOS_AGREED="1", OUT_DIR=OUT)
 code = run(f"python {SCRIPT} {ARGS}", cwd=REPO, env=env)
