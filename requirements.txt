@@ -8,3 +8,5 @@ coqui-tts==0.27.5
 transformers==4.57.6
 # independent speaker encoder (ECAPA) for eval/speaker_sim.py, latest on PyPI (Aug 2026)
 speechbrain==1.1.1
+# IndicXlit transliteration (CTranslate2 build) for text/translit.py, latest on PyPI
+ctranslate2==4.8.2
