@@ -178,7 +178,8 @@ def main() -> None:
         raise SystemExit(f"no metadata_<lang>_train.csv with rows in {args.data}")
     train_samples, eval_samples = load_tts_samples(data, eval_split=True)
     steps_per_epoch = max(1, len(train_samples) // args.batch)
-    config.epochs = math.ceil(args.max_steps / steps_per_epoch)
+    target_epochs = math.ceil(args.max_steps / steps_per_epoch)
+    config.epochs = target_epochs
 
     model = GPTTrainer.init_from_config(config)
     trainable, total = freeze_all_but_gpt(model)
@@ -208,10 +209,10 @@ def main() -> None:
         train_samples=train_samples, eval_samples=eval_samples,
         callbacks={"on_train_step_end": log.on_train_step_end, "on_epoch_end": log.on_epoch_end},
     )
-    # On resume the trainer reloads the old run's config.json, including its epoch
-    # count, so set this run's target again before fitting.
-    trainer.config.epochs = config.epochs
-    print(f"starting at step {trainer.total_steps_done}, epoch {trainer.epochs_done}, target epochs {config.epochs}")
+    # On resume the trainer loads the old run's config.json into the same config
+    # object, epoch count included, so set this run's target again from our own copy.
+    trainer.config.epochs = target_epochs
+    print(f"starting at step {trainer.total_steps_done}, epoch {trainer.epochs_done}, target epochs {target_epochs}")
     trainer.fit()
     summary.update({"steps_done": trainer.total_steps_done, "run_dir": str(trainer.output_path),
                     "peak_vram_gb": round(torch.cuda.max_memory_allocated() / 1024**3, 2)})
