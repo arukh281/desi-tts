@@ -26,6 +26,7 @@ import json
 import math
 import os
 import shutil
+import subprocess
 import time
 from pathlib import Path
 
@@ -64,6 +65,27 @@ def freeze_all_but_gpt(model) -> tuple[int, int]:
         total += p.numel()
         trainable += p.numel() if p.requires_grad else 0
     return trainable, total
+
+
+class MilestoneSaver:
+    """Keeps the model weights (no optimizer) at fixed fractions of training.
+
+    About 2 GB each instead of ~5 GB for a full checkpoint, so all of them fit
+    on Kaggle's disk and the val curve across training can be shown.
+    """
+
+    def __init__(self, folder: Path, steps: list[int]):
+        self.folder, self.steps = folder, set(steps)
+        folder.mkdir(parents=True, exist_ok=True)
+
+    def on_train_step_end(self, trainer) -> None:
+        import torch
+
+        step = trainer.total_steps_done
+        if step in self.steps:
+            state = {k: v for k, v in trainer.model.state_dict().items() if k.startswith("xtts.")}
+            torch.save({"model": state, "step": step}, self.folder / f"step_{step}.pth")
+            print(f"milestone saved: step {step}")
 
 
 class LossLog:
@@ -111,6 +133,9 @@ def main() -> None:
     ap.add_argument("--keep", type=int, default=2, help="how many checkpoints to keep")
     ap.add_argument("--eval-step", type=int, default=50, help="run the val split every N steps")
     ap.add_argument("--fp16", action="store_true")
+    ap.add_argument("--seed", type=int, default=1234, help="training seed (torch, numpy, random)")
+    ap.add_argument("--milestones", default="0.25,0.5,0.75,1.0",
+                    help="fractions of --max-steps at which to keep model weights (for checkpoint selection)")
     args = ap.parse_args()
 
     # Kaggle's "T4 x2" exposes two GPUs and the coqui trainer refuses to guess;
@@ -171,6 +196,7 @@ def main() -> None:
         lr_scheduler="MultiStepLR",
         lr_scheduler_params={"milestones": [10**9], "gamma": 0.5, "last_epoch": -1},  # constant lr for short runs
         test_sentences=[],  # we evaluate with infer/ and eval/ instead
+        training_seed=args.seed,
     )
 
     data = datasets(Path(args.data))
@@ -202,12 +228,24 @@ def main() -> None:
         print(f"resuming from {continue_path}")
 
     log = LossLog(out / "losses.csv")
+    milestones = sorted({max(1, round(args.max_steps * float(f))) for f in args.milestones.split(",")})
+    saver = MilestoneSaver(out / "milestones", milestones)
+    sha = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
+                         cwd=Path(__file__).resolve().parents[1]).stdout.strip()
+    json.dump({**vars(args), "git_sha": sha, "milestone_steps": milestones,
+               "train_clips": len(train_samples), "val_clips": len(eval_samples)},
+              open(out / "run_config.json", "w"), indent=2)
+
+    def on_step_end(trainer) -> None:
+        log.on_train_step_end(trainer)
+        saver.on_train_step_end(trainer)
+
     trainer = Trainer(
         TrainerArgs(restore_path=None, continue_path=str(continue_path) if continue_path else None,
                     skip_train_epoch=False, start_with_eval=False, grad_accum_steps=args.grad_accum),
         config, output_path=str(out), model=model,
         train_samples=train_samples, eval_samples=eval_samples,
-        callbacks={"on_train_step_end": log.on_train_step_end, "on_epoch_end": log.on_epoch_end},
+        callbacks={"on_train_step_end": on_step_end, "on_epoch_end": log.on_epoch_end},
     )
     # On resume the trainer loads the old run's config.json into the same config
     # object, epoch count included, so set this run's target again from our own copy.

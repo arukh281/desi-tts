@@ -24,14 +24,19 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--run", required=True)
     ap.add_argument("--out", required=True)
-    ap.add_argument("--checkpoint", help="file name inside the run (default: highest step)")
+    ap.add_argument("--checkpoint", help="a file path, or a file name inside the run (default: highest step)")
     ap.add_argument("--base", default="/tmp/xtts_base", help="base XTTS files (from train_gpt.py)")
     args = ap.parse_args()
 
     import torch
 
     run, out, base = Path(args.run), Path(args.out), Path(args.base)
-    ckpt = next(run.rglob(args.checkpoint)) if args.checkpoint else latest_checkpoint(run)
+    if args.checkpoint and Path(args.checkpoint).exists():
+        ckpt = Path(args.checkpoint)  # e.g. a milestones/step_N.pth file
+    elif args.checkpoint:
+        ckpt = next(run.rglob(args.checkpoint))
+    else:
+        ckpt = latest_checkpoint(run)
     state = torch.load(ckpt, map_location="cpu", weights_only=False)
     out.mkdir(parents=True, exist_ok=True)
     torch.save({"model": state["model"], "step": state.get("step")}, out / "model.pth")
