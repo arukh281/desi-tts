@@ -10,6 +10,8 @@ Reads data/processed/clips.csv (from prepare.py) and data/processed/asr.csv
   leakage.csv       any train/val text too close to benchmark or reference text
 
 Flagged clips stay in training; they're listed so I can listen to them.
+After listening, data/processed/overrides.csv (id,decision,note; decision keep
+or drop) has the final say, and the original reasons stay on the row.
 The split is stratified by language group (en / hinglish / hi), fixed seed.
 
 Usage:
@@ -139,6 +141,15 @@ def main() -> None:
         if "|" in clip["text"]:
             clip["status"], clip["reasons"] = "drop", "pipe_in_text"
         apply_asr(clip, asr.get(clip["id"]), cfg)
+
+    overrides = {}
+    if (out / "overrides.csv").exists():
+        overrides = {r["id"]: r for r in read_csv(out / "overrides.csv")}
+    for clip in clips:
+        o = overrides.get(clip["id"])
+        if o:
+            clip["reasons"] = "; ".join(filter(None, [clip["reasons"], f"listened: {o['decision']} ({o['note']})"]))
+            clip["status"] = o["decision"]
 
     usable = [c for c in clips if c["status"] != "drop"]
     split(usable, cfg["val_fraction"], cfg["seed"])
