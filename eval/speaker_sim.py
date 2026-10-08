@@ -6,6 +6,11 @@ homework. Each clip's embedding is compared by cosine similarity to the mean
 embedding of the reference clip(s). 1.0 = same voice print; unrelated voices
 usually land well below 0.5.
 
+If the reference files are named ref_en / ref_hinglish / ref_hi, each row is
+compared with the reference in its own language: the same voice scores much
+lower across languages (seen in the P1 probe), so mixing them would mislead.
+Otherwise the mean of all references is used.
+
 Writes <synth-dir>/speaker_sim.csv and prints mean/min per language.
 
 Usage (GPU or CPU):
@@ -41,12 +46,14 @@ def main() -> None:
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     encoder = EncoderClassifier.from_hparams(source=ENCODER, savedir="/tmp/ecapa", run_opts={"device": device})
-    ref = torch.stack([embed(encoder, p) for p in args.ref]).mean(dim=0)
+    refs = {Path(p).stem.replace("ref_", ""): embed(encoder, p) for p in args.ref}
+    mean_ref = torch.stack(list(refs.values())).mean(dim=0)
 
     synth = Path(args.synth_dir)
     rows = list(csv.DictReader(open(synth / "manifest.csv", encoding="utf-8")))
     out, by_lang = [], defaultdict(list)
     for row in rows:
+        ref = refs.get(row["lang"], mean_ref)
         sim = torch.nn.functional.cosine_similarity(embed(encoder, str(synth / f"{row['id']}.wav")), ref, dim=0)
         out.append({"id": row["id"], "lang": row["lang"], "cosine": round(float(sim), 3)})
         by_lang[row["lang"]].append(float(sim))
