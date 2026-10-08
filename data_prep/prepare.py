@@ -28,6 +28,7 @@ from scipy.signal import resample_poly
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "data_prep" / "config.json"
+DIGITAL_SILENCE_DB = -90.0  # quieter than any real room on this mic: stream start-up zeros
 
 
 def load_config(path: Path = CONFIG) -> dict:
@@ -52,10 +53,18 @@ def noise_and_snr(frames_db: np.ndarray, edge_frames: int) -> tuple[float, float
     otherwise pass for noise. Floor = the lower of the quietest 10% of the
     whole take and the quietest 20% of the edge frames. Speech = 95th percentile.
     """
-    floor = float(np.percentile(frames_db, 10))
+    # The mic stream starts with a few ms of pure digital zeros; that isn't the
+    # room, so leave out anything below DIGITAL_SILENCE_DB.
+    real = frames_db[frames_db > DIGITAL_SILENCE_DB]
+    if real.size == 0:
+        return float(frames_db.max()), 0.0
+    floor = float(np.percentile(real, 10))
     if len(frames_db) > 2 * edge_frames:
         edges = np.concatenate([frames_db[:edge_frames], frames_db[-edge_frames:]])
-        floor = min(floor, float(np.percentile(edges, 20)))
+        edges = edges[edges > DIGITAL_SILENCE_DB]
+        if edges.size:
+            floor = min(floor, float(np.percentile(edges, 20)))
+    frames_db = real
     speech = float(np.percentile(frames_db, 95))
     return floor, speech - floor
 
@@ -184,8 +193,8 @@ def judge(stats: dict, cfg: dict) -> tuple[str, list[str]]:
         drop.append(f"long_pause {stats['longest_pause_s']}s")
     elif stats["longest_pause_s"] > cfg["pause_flag_s"]:
         flag.append(f"long_pause {stats['longest_pause_s']}s")
-    if stats["edge_clicks_removed"]:
-        flag.append(f"edge_clicks_removed {stats['edge_clicks_removed']}")
+    # Enter-key clicks are expected on almost every take (key next to the mic);
+    # they're removed and counted in clips.csv, but not worth a listen each.
     status = "drop" if drop else "flag" if flag else "keep"
     return status, drop + flag
 

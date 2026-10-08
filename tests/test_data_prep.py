@@ -14,7 +14,7 @@ PY = sys.executable
 
 EXPECTED = {
     "syn_clean": ("keep", None),
-    "syn_click": ("flag", "edge_clicks_removed"),
+    "syn_click": ("keep", None),  # clicks are removed (see edge_clicks_removed), not flagged
     "syn_clip": ("drop", "clipping"),
     "syn_long": ("drop", "too_long"),
     "syn_noisy": ("drop", "low_snr"),
@@ -54,6 +54,11 @@ class SyntheticSession(unittest.TestCase):
                 self.assertEqual(self.result[clip]["status"], status, self.result[clip]["reasons"])
                 if reason:
                     self.assertIn(reason, self.result[clip]["reasons"])
+
+    def test_edge_clicks_are_removed_and_counted(self):
+        with open(self.out / "clips.csv", encoding="utf-8") as f:
+            clips = {r["id"]: r for r in csv.DictReader(f)}
+        self.assertEqual(clips["syn_click"]["edge_clicks_removed"], "2")
 
     def test_every_drop_and_flag_has_a_reason(self):
         for row in self.result.values():
