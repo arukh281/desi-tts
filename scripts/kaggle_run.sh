@@ -10,13 +10,15 @@
 #   SHA      commit to run (default: HEAD). Must already be pushed.
 #   KAGGLE   path to the kaggle CLI (default: kaggle on PATH)
 #   TIMEOUT  max run time in seconds (default: 2400 = 40 min)
+#   DATASETS space-separated private Kaggle datasets to attach, e.g. "desi-tts-own-voice"
+#            (mounted read-only at /kaggle/input/<name>/)
 #
 # Output lands in outputs/kaggle/<run_name>/ (gitignored), including
 # out/run_info.json with the exact SHA that ran.
 set -euo pipefail
 
 if [[ $# -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-  sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'
   exit 0
 fi
 
@@ -28,6 +30,7 @@ KAGGLE="${KAGGLE:-kaggle}"
 BRANCH="${BRANCH:-$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)}"
 SHA="${SHA:-$(git -C "$ROOT" rev-parse HEAD)}"
 TIMEOUT="${TIMEOUT:-2400}"
+DATASETS="${DATASETS:-}"
 
 # The kernel clones from GitHub, so the commit has to be there already.
 if ! git -C "$ROOT" branch -r --contains "$SHA" | grep -q "origin/$BRANCH"; then
@@ -37,6 +40,7 @@ fi
 
 USER_NAME="$("$KAGGLE" config view | awk -F': ' '/username/ {print $2}')"
 SLUG="desi-tts-$(echo "$RUN_NAME" | tr '[:upper:]_' '[:lower:]-')"
+SOURCES="$(for d in $DATASETS; do printf '"%s/%s",' "$USER_NAME" "$d"; done | sed 's/,$//')"
 WORK="$(mktemp -d)"
 OUT="$ROOT/outputs/kaggle/$RUN_NAME"
 
@@ -60,7 +64,7 @@ cat > "$WORK/kernel-metadata.json" <<EOF
   "is_private": true,
   "enable_gpu": true,
   "enable_internet": true,
-  "dataset_sources": [],
+  "dataset_sources": [$SOURCES],
   "competition_sources": [],
   "kernel_sources": []
 }
