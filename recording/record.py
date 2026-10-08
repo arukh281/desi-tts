@@ -31,6 +31,7 @@ import soundfile as sf
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "data" / "raw"
+ROMAN = ROOT / "recording" / "roman.tsv"  # private reading aid, see load_roman()
 SR = 48_000
 BUILT_IN_MIC = "MacBook"  # Bluetooth mics drop to phone-call quality, so we want the built-in one
 
@@ -49,6 +50,17 @@ def read_tsv(path: Path) -> list[dict]:
 def recorded_ids(raw_dir: Path) -> set[str]:
     """Prompt ids that already have a WAV in any session folder."""
     return {p.stem for p in raw_dir.glob("session_*/*.wav")}
+
+
+def load_roman(path: Path) -> dict[str, str]:
+    """Optional reading aid: Hindi lines in English letters (id -> roman).
+
+    The saved transcript stays in Devanagari, which XTTS's Hindi mode expects;
+    this only changes what's shown on screen.
+    """
+    if not path.exists():
+        return {}
+    return {r["id"]: r["roman"] for r in read_tsv(path)}
 
 
 def todo(prompts: list[dict], done: set[str]) -> list[dict]:
@@ -192,13 +204,22 @@ def take_with_meter(source) -> np.ndarray:
     return result["audio"]
 
 
-def record_prompts(prompts, out_dir: Path, source, log: SessionLog, ask=input) -> str:
+def show(n: int, total: int, p: dict, roman: dict[str, str]) -> None:
+    print("=" * 70)
+    print(f"{n}/{total}  [{p['id']}]  lang={p['lang']}\n")
+    if p["id"] in roman:
+        print(f"    READ:  {roman[p['id']]}\n")
+        print(f"    (saved as: {p['text']})\n")
+    else:
+        print(f"    {p['text']}\n")
+
+
+def record_prompts(prompts, out_dir: Path, source, log: SessionLog, ask=input, roman=None) -> str:
     """Walk the prompts. Returns 'done' or 'quit'."""
     for n, p in enumerate(prompts, 1):
         redos = 0
         while True:
-            print("=" * 70)
-            print(f"{n}/{len(prompts)}  [{p['id']}]  lang={p['lang']}\n\n    {p['text']}\n")
+            show(n, len(prompts), p, roman or {})
             ask("Enter to start...")
             audio = take_with_meter(source)
             for w in check_take(audio):
@@ -236,7 +257,7 @@ def run_session(args) -> None:
     print(f"{len(remaining)} prompts left to record.")
     out_dir = RAW / f"session_{args.session}"
     log = SessionLog(out_dir / "session_log.jsonl", mic.name)
-    status = record_prompts(remaining, out_dir, mic, log)
+    status = record_prompts(remaining, out_dir, mic, log, roman=load_roman(ROMAN))
     log.write(event="end", status=status)
     print(f"Saved in {out_dir}. {len(recorded_ids(RAW))} prompts recorded in total.")
 
@@ -250,7 +271,7 @@ def run_reference(args) -> None:
     out_dir = RAW / "reference"
     prompts = [{"id": f"ref_{r['lang']}", "lang": r["lang"], "text": r["text"]} for r in lines]
     log = SessionLog(out_dir / "session_log.jsonl", mic.name)
-    record_prompts(prompts, out_dir, mic, log)
+    record_prompts(prompts, out_dir, mic, log, roman=load_roman(ROMAN))
     print(f"Reference clips saved in {out_dir}")
 
 
