@@ -12,6 +12,7 @@ Usage:
 """
 import argparse
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -36,6 +37,8 @@ def main() -> None:
     ap.add_argument("--normalize", choices=["on", "off"], default="off")
     ap.add_argument("--seed", default="1234")
     ap.add_argument("--stream", action="store_true")
+    ap.add_argument("--synth-from", help="reuse audio from an earlier synth folder instead of synthesising "
+                                         "(re-score only; --model/--normalize are then ignored)")
     args = ap.parse_args()
 
     out = Path(os.environ.get("OUT_DIR", "outputs")) / args.name
@@ -43,7 +46,11 @@ def main() -> None:
              "--normalize", args.normalize, "--seed", args.seed, "--out", str(out)]
     synth += ["--ref", *args.ref] if args.ref else ["--speaker", args.speaker]
     synth += ["--stream"] if args.stream else []
-    run(*synth)
+    if args.synth_from:
+        shutil.copytree(args.synth_from, out, dirs_exist_ok=True)
+        print(f"reusing audio from {args.synth_from}")
+    else:
+        run(*synth)
     run("eval/asr_eval.py", "--synth-dir", str(out), "--benchmark", args.benchmark)
     if args.ref:
         sim_ref = args.ref
