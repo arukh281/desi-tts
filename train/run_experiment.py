@@ -25,17 +25,39 @@ def run(*args: str) -> None:
     subprocess.run([sys.executable, *args], check=True, cwd=ROOT)
 
 
+def subset(data: Path, sessions: list[str], dest: Path) -> str:
+    """Metadata filtered to some recording sessions (wavs linked, not copied)."""
+    import csv
+
+    keep = {r["id"] for r in csv.DictReader(open(data / "keep_drop.csv", encoding="utf-8"))
+            if r["session"] in sessions}
+    dest.mkdir(parents=True, exist_ok=True)
+    if not (dest / "wavs").exists():
+        (dest / "wavs").symlink_to(data / "wavs")
+    counts = {}
+    for meta in data.glob("metadata_*.csv"):
+        lines = meta.read_text(encoding="utf-8").splitlines()
+        rows = [l for l in lines[1:] if Path(l.split("|")[0]).stem in keep]
+        (dest / meta.name).write_text("\n".join([lines[0], *rows]) + "\n", encoding="utf-8")
+        counts[meta.name] = len(rows)
+    print(f"training subset {sessions}: {counts}")
+    return str(dest)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--name", required=True)
     ap.add_argument("--data", required=True)
     ap.add_argument("--ref", nargs="+", required=True)
+    ap.add_argument("--sessions", help="comma-separated sessions to train on, e.g. session_1 (default: all)")
     ap.add_argument("train_args", nargs=argparse.REMAINDER, help="passed to train_gpt.py (after --)")
     args = ap.parse_args()
     extra = [a for a in args.train_args if a != "--"]
 
     out = Path(os.environ.get("OUT_DIR", "outputs")) / args.name
     train, select = out / "train", out / "select"
+    if args.sessions:
+        args.data = subset(Path(args.data), args.sessions.split(","), out / "data_subset")
     run("train/train_gpt.py", "--data", args.data, "--out", str(train), *extra)
     run("train/select_checkpoint.py", "--run", str(train), "--data", args.data, "--ref", *args.ref,
         "--out", str(select))
