@@ -79,12 +79,24 @@ def load_whisper(model: str = WHISPER_MODEL):
     return pipeline("automatic-speech-recognition", model=model, torch_dtype=torch.float16, device=0)
 
 
-def transcribe(asr, paths: list[str], langs: list[str], batch_size: int = 8) -> list[str]:
-    """Transcribe in batches, one forced language per batch."""
+def transcribe(asr, paths: list[str], langs: list[str], batch_size: int = 4) -> list[str]:
+    """Transcribe in batches, one forced language per batch.
+
+    Greedy decoding with a token cap: on babbling TTS audio, Whisper's beam
+    search can loop and run a 16 GB T4 out of memory (seen on E2). If a batch
+    still runs out of memory, that language is redone one clip at a time.
+    """
+    import torch
+
+    kwargs = {"task": "transcribe", "num_beams": 1, "max_new_tokens": 200}
     out = {}
     for lang in sorted(set(langs)):
         group = [p for p, l in zip(paths, langs) if l == lang]
-        results = asr(group, batch_size=batch_size,
-                      generate_kwargs={"language": WHISPER_LANG[lang], "task": "transcribe"})
+        gen = {**kwargs, "language": WHISPER_LANG[lang]}
+        try:
+            results = asr(group, batch_size=batch_size, generate_kwargs=gen)
+        except torch.OutOfMemoryError:
+            torch.cuda.empty_cache()
+            results = [asr(p, generate_kwargs=gen) for p in group]
         out.update({p: r["text"].strip() for p, r in zip(group, results)})
     return [out[p] for p in paths]

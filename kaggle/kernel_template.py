@@ -25,6 +25,7 @@ SHA = "__SHA__"
 SCRIPT = "__SCRIPT__"
 ARGS = "__ARGS__"
 DATASETS = "__DATASETS__"
+KERNELS = "__KERNELS__"
 
 REPO_URL = "https://github.com/arukh281/desi-tts.git"
 REPO = "/kaggle/working/desi-tts"
@@ -80,7 +81,7 @@ if run("pip install -q -r requirements.txt", cwd=REPO) != 0:
 run("pip list 2>/dev/null | grep -i -E '^(torch|torchaudio|torchcodec|coqui-tts|transformers) '")
 
 os.makedirs("/tmp/in", exist_ok=True)
-for name in DATASETS.split():
+for name in DATASETS.split() + [k.split("/")[-1] for k in KERNELS.split()]:
     found = sorted((p for p in Path("/kaggle/input").rglob(name) if p.is_dir()), key=lambda p: len(p.parts))
     if not found:
         run("find /kaggle/input -maxdepth 4")
@@ -88,6 +89,7 @@ for name in DATASETS.split():
     os.symlink(found[0], f"/tmp/in/{name}")
     print(f"dataset {name}: {found[0]} -> /tmp/in/{name}")
 info["datasets"] = DATASETS
+info["kernel_inputs"] = KERNELS
 
 env = dict(os.environ, COQUI_TOS_AGREED="1", OUT_DIR=OUT)
 code = run(f"python {SCRIPT} {ARGS}", cwd=REPO, env=env)

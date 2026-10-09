@@ -12,13 +12,15 @@
 #   TIMEOUT  max run time in seconds (default: 2400 = 40 min)
 #   DATASETS space-separated private Kaggle datasets to attach, e.g. "desi-tts-own-voice"
 #            (scripts see each one at /tmp/in/<name>/)
+#   KERNELS  space-separated earlier kernel runs whose output to attach, e.g.
+#            "desi-tts-e2-finetune-s1" (also at /tmp/in/<name>/)
 #
 # Output lands in outputs/kaggle/<run_name>/ (gitignored), including
 # out/run_info.json with the exact SHA that ran.
 set -euo pipefail
 
 if [[ $# -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-  sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'
   exit 0
 fi
 
@@ -31,6 +33,7 @@ BRANCH="${BRANCH:-$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)}"
 SHA="${SHA:-$(git -C "$ROOT" rev-parse HEAD)}"
 TIMEOUT="${TIMEOUT:-2400}"
 DATASETS="${DATASETS:-}"
+KERNELS="${KERNELS:-}"
 
 # The kernel clones from GitHub, so the commit has to be there already.
 if ! git -C "$ROOT" branch -r --contains "$SHA" | grep -q "origin/$BRANCH"; then
@@ -41,16 +44,17 @@ fi
 USER_NAME="$("$KAGGLE" config view | awk -F': ' '/username/ {print $2}')"
 SLUG="desi-tts-$(echo "$RUN_NAME" | tr '[:upper:]_' '[:lower:]-')"
 SOURCES="$(for d in $DATASETS; do printf '"%s/%s",' "$USER_NAME" "$d"; done | sed 's/,$//')"
+KSOURCES="$(for k in $KERNELS; do printf '"%s/%s",' "$USER_NAME" "$k"; done | sed 's/,$//')"
 WORK="$(mktemp -d)"
 OUT="$ROOT/outputs/kaggle/$RUN_NAME"
 
 # Fill in the template. ARGS goes through Python so quotes can't break the file.
-python3 - "$ROOT/kaggle/kernel_template.py" "$WORK/kernel.py" "$BRANCH" "$SHA" "$SCRIPT" "$ARGS" "$DATASETS" <<'EOF'
+python3 - "$ROOT/kaggle/kernel_template.py" "$WORK/kernel.py" "$BRANCH" "$SHA" "$SCRIPT" "$ARGS" "$DATASETS" "$KERNELS" <<'EOF'
 import sys
-src, dst, branch, sha, script, args, datasets = sys.argv[1:]
+src, dst, branch, sha, script, args, datasets, kernels = sys.argv[1:]
 text = open(src).read()
 for key, value in {"__BRANCH__": branch, "__SHA__": sha, "__SCRIPT__": script, "__ARGS__": args,
-                   "__DATASETS__": datasets}.items():
+                   "__DATASETS__": datasets, "__KERNELS__": kernels}.items():
     text = text.replace(f'"{key}"', repr(value))
 open(dst, "w").write(text)
 EOF
@@ -67,7 +71,7 @@ cat > "$WORK/kernel-metadata.json" <<EOF
   "enable_internet": true,
   "dataset_sources": [$SOURCES],
   "competition_sources": [],
-  "kernel_sources": []
+  "kernel_sources": [$KSOURCES]
 }
 EOF
 
