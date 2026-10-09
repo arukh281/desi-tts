@@ -12,6 +12,9 @@ a TTS error.
 Scoring: both texts go through text/normalize.py (so "₹50" and "fifty rupees"
 compare equal), then lowercase, punctuation stripped, Devanagari nukta and
 chandrabindu folded, spaces collapsed. CER and WER are plain edit distances.
+For Hindi, Whisper writes English loanwords in Latin script ("आपकी booking"),
+so Latin words are first transliterated to Devanagari (text/translit.py,
+IndicXlit); without that, correct speech scores as wrong.
 """
 import re
 import string
@@ -28,7 +31,21 @@ WHISPER_LANG = {"en": "en", "hinglish": "en", "hi": "hi"}
 PUNCT = string.punctuation + "।॥“”‘’…–—"
 
 
+def latin_to_devanagari(text: str) -> str:
+    """Latin-script words inside Hindi text -> Devanagari. No-op if IndicXlit isn't installed."""
+    if not re.search(r"[A-Za-z]{2,}", text):
+        return text
+    try:
+        from text.translit import to_devanagari
+    except ImportError:
+        return text
+    parts = re.split(r"([A-Za-z][A-Za-z ]*[A-Za-z]|[A-Za-z])", text)
+    return "".join(to_devanagari(p)[0].rstrip("।") if re.fullmatch(r"[A-Za-z ]+", p) else p for p in parts)
+
+
 def score_text(text: str, lang: str) -> str:
+    if lang == "hi":
+        text = latin_to_devanagari(text)
     text = normalize(text, lang)[0]
     text = unicodedata.normalize("NFD", text).replace("़", "")  # nukta: ज़ -> ज
     text = unicodedata.normalize("NFC", text).replace("ँ", "ं")  # chandrabindu -> anusvara
