@@ -128,6 +128,8 @@ def main() -> None:
 
     columns = ["id", "lang", "xtts_lang", "n_chars", "text_in", "text_used", "audio_s", "wall_s", "rtf"]
     columns += ["ttfa_s"] if args.stream else []
+    columns += ["error"]
+    failed = 0
     with open(out / "manifest.csv", "w", encoding="utf-8", newline="") as f:
         manifest = csv.DictWriter(f, fieldnames=columns)
         manifest.writeheader()
@@ -138,7 +140,15 @@ def main() -> None:
 
             torch.cuda.synchronize()
             start = time.perf_counter()
-            wav = model.inference(text, lang, latent, embedding, **gen)["wav"]
+            try:
+                wav = model.inference(text, lang, latent, embedding, **gen)["wav"]
+            except Exception as e:  # e.g. XTTS's own number expansion crashing on raw Hindi digits
+                failed += 1
+                print(f"{row['id']} FAILED: {type(e).__name__}: {e}", flush=True)
+                manifest.writerow({"id": row["id"], "lang": row["lang"], "xtts_lang": lang,
+                                   "n_chars": len(text), "text_in": row["text"], "text_used": text,
+                                   "error": f"xtts_error {type(e).__name__}"})
+                continue
             torch.cuda.synchronize()
             wall = time.perf_counter() - start
 
@@ -166,7 +176,7 @@ def main() -> None:
     summary = {"model": args.model, "model_mb_on_disk": round(model_mb, 1),
                "peak_vram_gb": round(torch.cuda.max_memory_allocated() / 1024**3, 2),
                "stream_chunk_size": args.chunk_size if args.stream else None,
-               "gpu": torch.cuda.get_device_name(0), "n_rows": len(rows)}
+               "gpu": torch.cuda.get_device_name(0), "n_rows": len(rows), "n_failed": failed}
     json.dump(summary, open(out / "run_summary.json", "w"), indent=2)
     print(summary)
     print(f"wrote {len(rows)} files to {out}")

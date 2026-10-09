@@ -37,7 +37,7 @@ def main() -> None:
     args = ap.parse_args()
 
     synth = Path(args.synth_dir)
-    rows = list(csv.DictReader(open(synth / "manifest.csv", encoding="utf-8")))
+    rows = [r for r in csv.DictReader(open(synth / "manifest.csv", encoding="utf-8")) if not r.get("error")]
     bench = {}
     if Path(args.benchmark).exists():
         bench = {r["id"]: r for r in csv.DictReader(open(args.benchmark, encoding="utf-8"), delimiter="\t")}

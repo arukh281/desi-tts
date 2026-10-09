@@ -60,7 +60,7 @@ def main() -> None:
     ap.add_argument("--synth-dir", required=True)
     synth = Path(ap.parse_args().synth_dir)
 
-    rows = list(csv.DictReader(open(synth / "manifest.csv", encoding="utf-8")))
+    rows = [r for r in csv.DictReader(open(synth / "manifest.csv", encoding="utf-8")) if not r.get("error")]
     asr = {}
     if (synth / "asr_eval.csv").exists():
         asr = {r["id"]: r for r in csv.DictReader(open(synth / "asr_eval.csv", encoding="utf-8"))}

@@ -50,7 +50,7 @@ def main() -> None:
     mean_ref = torch.stack(list(refs.values())).mean(dim=0)
 
     synth = Path(args.synth_dir)
-    rows = list(csv.DictReader(open(synth / "manifest.csv", encoding="utf-8")))
+    rows = [r for r in csv.DictReader(open(synth / "manifest.csv", encoding="utf-8")) if not r.get("error")]
     out, by_lang = [], defaultdict(list)
     for row in rows:
         ref = refs.get(row["lang"], mean_ref)
