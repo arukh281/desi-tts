@@ -12,6 +12,8 @@
 #   TIMEOUT  max run time in seconds (default: 2400 = 40 min)
 #   DATASETS space-separated private Kaggle datasets to attach, e.g. "desi-tts-own-voice"
 #            (scripts see each one at /tmp/in/<name>/)
+#   FETCH    regex of output files to download (default: everything). Use it to skip
+#            multi-GB weights, e.g. FETCH='\.(csv|json|txt)$'
 #   KERNELS  space-separated earlier kernel runs whose output to attach, e.g.
 #            "desi-tts-e2-finetune-s1" (also at /tmp/in/<name>/)
 #
@@ -20,7 +22,7 @@
 set -euo pipefail
 
 if [[ $# -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-  sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'
   exit 0
 fi
 
@@ -81,7 +83,7 @@ echo "Pushing $SLUG: $SCRIPT $ARGS @ ${SHA:0:7} ($BRANCH)"
 # Poll until the run finishes.
 START=$(date +%s)
 while true; do
-  STATUS="$("$KAGGLE" kernels status "$USER_NAME/$SLUG" 2>&1 || true)"
+  STATUS="$(timeout 120 "$KAGGLE" kernels status "$USER_NAME/$SLUG" 2>&1 || true)"  # calls can hang on a bad network
   ELAPSED=$(( $(date +%s) - START ))
   echo "[$((ELAPSED / 60))m$((ELAPSED % 60))s] $STATUS"
   case "$STATUS" in
@@ -91,7 +93,10 @@ while true; do
 done
 
 mkdir -p "$OUT"
-"$KAGGLE" kernels output "$USER_NAME/$SLUG" -p "$OUT" -o >/dev/null
+for attempt in 1 2 3; do
+  timeout 900 "$KAGGLE" kernels output "$USER_NAME/$SLUG" -p "$OUT" -o ${FETCH:+--file-pattern "$FETCH"} >/dev/null 2>&1 && break
+  echo "download attempt $attempt failed, retrying"; sleep 20
+done
 echo "Output in $OUT"
 [[ -f "$OUT/out/run_info.json" ]] && cat "$OUT/out/run_info.json"
 case "$STATUS" in *COMPLETE*) exit 0 ;; *) exit 1 ;; esac
