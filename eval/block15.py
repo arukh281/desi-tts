@@ -42,11 +42,15 @@ def main() -> None:
     ap.add_argument("--ref", nargs="+", required=True)
     ap.add_argument("--name", default="pick")
     ap.add_argument("--flags", default="")
+    ap.add_argument("--model", help="model export dir (default: the final E3 weights)")
+    ap.add_argument("--only", help="comma-separated settings to run in the heldout stage")
     args = ap.parse_args()
     out = Path(os.environ.get("OUT_DIR", "outputs")) / "block15" / args.stage
-    model = e3_model()
+    model = args.model or e3_model()
     if args.stage == "heldout":
         texts, settings = ROOT / "benchmark" / "names_heldout.tsv", SETTINGS
+        if args.only:
+            settings = {k: v for k, v in SETTINGS.items() if k in args.only.split(",")}
     else:
         texts, settings = ROOT / "benchmark" / "benchmark.tsv", {args.name: shlex.split(args.flags.replace("RESPELL", RESPELL))}
     jobs = []

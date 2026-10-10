@@ -76,6 +76,30 @@ def hinglish_as_hindi(data: str, dest: Path) -> str:
     return str(dest)
 
 
+def upweight_names(data: str, times: int, dest: Path) -> str:
+    """Repeat English training clips whose text has a name or place (capitalised, not sentence-initial,
+    not an acronym; eval/names_real.py's rule) `times` extra times. Val is untouched."""
+    sys.path.insert(0, str(ROOT / "eval"))
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from check_overlap import capitalised_words
+    from names_real import NOT_NAMES
+
+    src = Path(data)
+    dest.mkdir(parents=True, exist_ok=True)
+    if not (dest / "wavs").exists():
+        (dest / "wavs").symlink_to((src / "wavs").resolve())
+    for meta in src.glob("metadata_*.csv"):
+        lines = meta.read_text(encoding="utf-8").splitlines()
+        rows = list(lines[1:])
+        if meta.name == "metadata_en_train.csv":
+            named = [l for l in rows if any(w not in NOT_NAMES and not w.isupper()
+                                             for w in capitalised_words(l.split("|")[1]))]
+            rows += named * times
+            print(f"upweight names: {len(named)} clips x{times + 1}", flush=True)
+        (dest / meta.name).write_text("\n".join([lines[0], *rows]) + "\n", encoding="utf-8")
+    return str(dest)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--name", required=True)
@@ -87,6 +111,8 @@ def main() -> None:
                          "Hinglish via Devanagari/hi)")
     ap.add_argument("--hinglish-as-hindi", action="store_true",
                     help="E4: train on Hinglish transcripts converted to Devanagari with language hi")
+    ap.add_argument("--upweight-names", type=int, default=0,
+                    help="repeat English training clips with names this many extra times (Block 15)")
     ap.add_argument("--keep-model", action="store_true",
                     help="keep the selected checkpoint's export (~1.9 GB) in the output for later runs")
     ap.add_argument("train_args", nargs=argparse.REMAINDER, help="passed to train_gpt.py (after --)")
@@ -103,6 +129,8 @@ def main() -> None:
         args.data = subset(Path(args.data), args.sessions.split(","), out / "data_subset")
     if args.hinglish_as_hindi:
         args.data = hinglish_as_hindi(args.data, out / "data_hinglish_hi")
+    if args.upweight_names:
+        args.data = upweight_names(args.data, args.upweight_names, out / "data_names_up")
     run("train/train_gpt.py", "--data", args.data, "--out", str(train), *extra)
     run("train/select_checkpoint.py", "--run", str(train), "--data", args.data, "--ref", *args.ref,
         "--out", str(select))
