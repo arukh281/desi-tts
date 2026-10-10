@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>desi-tts samples</title>
+<style>
+  :root { --bg: #fbfaf7; --fg: #1d1d1b; --muted: #6b6a66; --line: #e2e0da; --card: #ffffff; --accent: #8a3b12; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #161615; --fg: #ecebe7; --muted: #a09e98; --line: #2e2d2b; --card: #1f1f1d; --accent: #e08a5a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 -apple-system, system-ui, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.6rem; margin: 0 0 8px; }
+  h2 { font-size: 1.15rem; margin: 36px 0 4px; padding-top: 12px; border-top: 2px solid var(--fg); }
+  p { margin: 0 0 12px; }
+  .lede, .hint { color: var(--muted); }
+  a { color: var(--accent); }
+  .row { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 14px; margin: 12px 0; }
+  .meta { font-size: 0.8rem; color: var(--muted); margin: 0 0 4px; letter-spacing: 0.02em; }
+  .text { font-size: 1.05rem; margin: 0 0 8px; }
+  .note { font-size: 0.9rem; color: var(--accent); }
+  .takes { display: grid; gap: 10px; }
+  .take { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "who cer" "audio audio"; gap: 2px 8px; align-items: center; }
+  .who { grid-area: who; font-weight: 600; font-size: 0.9rem; }
+  .cer { grid-area: cer; font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  audio { grid-area: audio; width: 100%; height: 40px; }
+  @media (min-width: 640px) { .takes { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); } }
+  footer { margin-top: 36px; font-size: 0.85rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+<h1>desi-tts samples</h1>
+<p class="lede">An Indian English, Hindi and Hinglish voice made by fine-tuning XTTS-v2 on 24 minutes of my own recordings.</p>
+<p class="hint"><b>Baseline</b>: pretrained XTTS-v2 cloning my voice from three short reference clips, with my text normaliser. <b>Final</b>: the fine-tuned model (E3, step 1500) with the same normaliser, and Hinglish sent as Devanagari. All clips are synthetic, one take each with seed 1234, not picked for being good. CER is Whisper large-v3's character error rate on that one clip (lower is better). Use headphones if you can.</p>
+
+<h2>The brief's sentences and two Hindi rows</h2>
+<p class="hint">The biggest change is the voice; most of these were already understandable before.</p>
+{{GOOD}}
+
+<h2>The Hinglish fix</h2>
+<p class="hint">Pretrained XTTS reads Roman-script Hinglish as English and garbles it. Fine-tuning helps a bit; sending the same sentence in Devanagari (transliterated automatically with IndicXlit) fixes most of it. Hinglish CER here is a rough score: Hindi Whisper against my hand-written Devanagari.</p>
+{{HINGLISH}}
+
+<h2>Where it still fails: names</h2>
+<p class="hint">Indian names and places are the main remaining weakness. On these the baseline is often better.</p>
+{{FAILURES}}
+
+<footer>Full numbers, with 3 seeds and 95% intervals, are in the <a href="https://github.com/arukh281/desi-tts/blob/main/report/REPORT.md">report</a>. Code: <a href="https://github.com/arukh281/desi-tts">github.com/arukh281/desi-tts</a>.</footer>
+</main>
+</body>
+</html>

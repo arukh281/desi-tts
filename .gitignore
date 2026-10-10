@@ -27,3 +27,6 @@ __pycache__/
 .venv/
 venv/
 env/
+
+# published samples (synthetic only, see scripts/build_samples.py)
+!docs/audio/*.mp3
