@@ -53,12 +53,14 @@ def main() -> None:
     ap.add_argument("--bench", default="raw,norm",
                     help="benchmark variants: raw (no normaliser), norm (normaliser), deva (normaliser + "
                          "Hinglish via Devanagari/hi)")
+    ap.add_argument("--keep-model", action="store_true",
+                    help="keep the selected checkpoint's export (~1.9 GB) in the output for later runs")
     ap.add_argument("train_args", nargs=argparse.REMAINDER, help="passed to train_gpt.py (after --)")
     args = ap.parse_args()
     variants = {"raw": ["--normalize", "off"], "norm": ["--normalize", "on"],
                 "deva": ["--normalize", "on", "--hinglish-route", "deva"]}
     names = {"raw": "bench_norm_off", "norm": "bench_norm_on", "deva": "bench_deva"}
-    args.bench = [(names[v], variants[v]) for v in args.bench.split(",")]
+    args.bench = [(names[v], variants[v]) for v in args.bench.split(",") if v]
     extra = [a for a in args.train_args if a != "--"]
 
     out = Path(os.environ.get("OUT_DIR", "outputs")) / args.name
@@ -74,8 +76,10 @@ def main() -> None:
         run("eval/evaluate.py", "--name", name, "--model", chosen, "--ref", *args.ref, "--stream", *extra_eval)
 
     # Keep logs, CSVs and audio; drop the multi-GB weights so Kaggle doesn't ship them back.
+    keep = Path(chosen) / "model.pth" if args.keep_model else None
     for p in list(out.rglob("*.pth")):
-        p.unlink()
+        if p != keep and p.name != "speakers_xtts.pth":
+            p.unlink()
     shutil.rmtree(train / "milestones", ignore_errors=True)
     print("done:", out)
 

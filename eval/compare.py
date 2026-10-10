@@ -6,6 +6,9 @@ speaker_sim.csv, duration_check.csv). Prints markdown tables:
   duration flags, median RTF and time to first audio.
 Then lists the clips where run B beats run A most and loses most (by CER).
 
+Rows where XTTS crashed (manifest "error" column) count as failures with
+CER = WER = 1.0, so a run can't look better by skipping what it can't say.
+
 Usage:
   python eval/compare.py --run E0=path/e0 --run E1=path/e1 --run E2=path/e2 --listen E0,E2
 """
@@ -37,6 +40,13 @@ def main() -> None:
     data = {k: {"asr": read(p / "asr_eval.csv"), "sim": read(p / "speaker_sim.csv"),
                 "dur": read(p / "duration_check.csv"), "man": read(p / "manifest.csv")} for k, p in runs.items()}
     names = list(runs)
+    for d in data.values():  # crashed rows score as total failures
+        scored = {r["id"] for r in d["asr"]}
+        cats = {r["id"]: r["category"] for d2 in data.values() for r in d2["asr"]}
+        for r in d["man"]:
+            if r.get("error") and r["id"] not in scored:
+                d["asr"].append({"id": r["id"], "lang": r["lang"], "category": cats.get(r["id"], "?"),
+                                 "cer": "1.0", "wer": "1.0"})
 
     def table(title: str, key: str, rows_of) -> None:
         groups = sorted({r[key] for d in data.values() for r in d["asr"]})
