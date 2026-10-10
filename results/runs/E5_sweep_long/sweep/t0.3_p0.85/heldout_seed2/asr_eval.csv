@@ -1,0 +1,11 @@
+id,lang,category,metric,cer,wer,ref_chars,hyp_chars,reference,hypothesis
+h01,hinglish,fixture,hinglish_deva_rough,0.2,0.5,49,50,आपका नया डेबिट कार्ड अगले हफ्ते तक घर पहुंच जाएगा,आपका अनाया डेबिट एक और आगले हफ़ते तक घर पहुंच जाएगा।
+h02,hinglish,fixture,hinglish_deva_rough,0.13,0.333,57,66,सर आपकी लास्ट पेमेंट अभी तक हमारे सिस्टम में नहीं दिख रही,ISIR आपकी last payment अभी तक हमारे system में नहीं दिख रही.
+h03,hinglish,fixture,hinglish_deva_rough,0.047,0.2,52,52,क्या आप मुझे अपना रजिस्टर्ड ईमेल एड्रेस बता सकते हैं,क्या आप मुझे अपना registered email address बता सकते हैं?
+h04,hinglish,fixture,hinglish_deva_rough,0.027,0.125,44,44,हमारे टेक्नीशियन कल ग्यारह बजे आपके घर आएंगे,हमारे technician कल 11 बजे आपके घर आएंगे।
+h05,hinglish,fixture,hinglish_deva_rough,0.203,0.4,73,75,इंश्योरेंस कंपनी ने आपकी फाइल चेक कर ली है अमाउंट दो दिन में क्रेडिट होगा,"Insurance Company आपकी File Checker ELI है, Amount 2 दिन में Credit होगा."
+h06,hinglish,fixture,hinglish_deva_rough,0.195,0.417,52,59,इस महीने आपका मोबाइल बिल छह सौ उनचास रुपये का बना है,IIS महिनी आपका AmmoBile बिल 649 रुपे का बना है।
+h07,hinglish,fixture,hinglish_deva_rough,0.047,0.083,54,54,अगर आप चाहें तो मैं अभी आपका प्लान अपग्रेड कर सकता हूं,अगर आप चाहें तो मैं अभी आपका प्लान अपग्रेड कर आखता हूँ।
+h08,hinglish,fixture,hinglish_deva_rough,0.051,0.222,47,49,आपकी टिकट बुकिंग कैंसल करने पर थोडा चार्ज लगेगा,आपकी टिकेट बुकिंग कैंसल करने पर थोड़ा चार्ज अलगेगा।
+h09,hinglish,fixture,hinglish_deva_rough,0.146,0.2,50,47,मीटिंग का लिंक मैंने आपके व्हाट्सऐप पर भेज दिया है,मीटिंग का एलिंक मैंने आपके वाटसब पर भेज दिया है।
+h10,hinglish,fixture,hinglish_deva_rough,0.122,0.25,52,54,आपका पासवर्ड रीसेट हो गया है अब आप लॉगिन कर सकते हैं,आपका पासवर्ड रिसेट हो गया है. एबी आप अलोगिन कर सकते हैं.

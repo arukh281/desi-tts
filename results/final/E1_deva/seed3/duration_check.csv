@@ -1,0 +1,17 @@
+id,lang,s_per_char,vs_median,flags
+b061,hinglish,0.1118,1.08,
+b062,hinglish,0.0962,0.93,
+b063,hinglish,0.1111,1.08,
+b064,hinglish,0.1647,1.6,stretched 1.60x; hyp_longer 62/37 chars
+b065,hinglish,0.0853,0.83,
+b066,hinglish,0.0937,0.91,
+b067,hinglish,0.1195,1.16,
+b068,hinglish,0.1254,1.22,
+b069,hinglish,0.0994,0.96,
+b070,hinglish,0.1132,1.1,
+b071,hinglish,0.089,0.86,
+b072,hinglish,0.1226,1.19,
+b073,hinglish,0.1068,1.04,
+b074,hinglish,0.0913,0.89,
+b075,hinglish,0.0954,0.93,
+b076,hinglish,0.0695,0.67,

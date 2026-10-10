@@ -1,0 +1,17 @@
+id,lang,category,metric,cer,wer,ref_chars,hyp_chars,reference,hypothesis
+b061,hinglish,conversational,hinglish_deva_rough,0.0,0.0,38,38,आपका पेमेंट सक्सेसफुली रिसीव हो गया है,आपका payment successfully receive हो गया है.
+b062,hinglish,currency,hinglish_deva_rough,0.0,0.0,54,54,आपका ई एम आई आठ हजार पांच सौ रुपये का है और कल ड्यू है,"आपका EMI 8,500 रुपए का है और कल ड्यू है।"
+b063,hinglish,dates_times,hinglish_deva_rough,0.033,0.125,37,37,आपका ऑर्डर चार बजे तक डिलीवर हो जाएगा,आपका order चार बजे तक deliver हो जाएगा.
+b064,hinglish,questions,hinglish_deva_rough,0.679,0.6,37,62,क्या आप अपना ओ टी पी शेयर कर सकते हैं,क्या आप अपना OTP शेयर कर सकते हैं? नोट जातो बान नहीं हो डेल
+b065,hinglish,currency,hinglish_deva_rough,0.125,0.133,70,75,आपके अकाउंट में दो हजार तीन सौ चालीस रुपये का कैशबैक क्रेडिट हो गया है,आपके अकाउंट में 2340 रुपए का क्या अश्वेक क्रेडिट हो गया है?
+b066,hinglish,numbers,hinglish_deva_rough,0.049,0.083,52,53,आपकी कंप्लेंट नंबर सात सात आठ एक दो रजिस्टर हो गई है,आपकी complaint number 77812 register हो गई है।
+b067,hinglish,names,hinglish_deva_rough,0.067,0.333,38,37,राहुल जी आपका के वाई सी अभी पेंडिंग है,"लाहुर जी, आपका के वाईसी अभी पेंडिंग है।"
+b068,hinglish,places,hinglish_deva_rough,0.138,0.143,35,36,हमारी पुणे वाली ब्रांच कल बंद रहेगी,हमारी प्यून वाली ब्रांच कल बंद रहेगी।
+b069,hinglish,numbers,hinglish_deva_rough,0.095,0.25,53,57,अगर नेटवर्क इश्यू है तो आप एक सौ अट्ठानवे पे कॉल करिए,"अगर network issue है, तो आप 198 पर ये एकवल करिए."
+b070,hinglish,numbers,hinglish_deva_rough,0.03,0.125,40,40,आपका रिचार्ज अट्ठाईस दिन के लिए वैलिड है,आपका recharge 28 दिन के लिए valid है।
+b071,hinglish,names,hinglish_deva_rough,0.225,0.4,49,47,सुनीता जी आपकी पॉलिसी का रिन्यूअल कल तक करना होगा,निता जी आपकी पॉलिसी का रहने वाल कर तक करना होगा
+b072,hinglish,names,hinglish_deva_rough,0.062,0.222,40,41,मोहम्मद इरफान के नाम से एक पार्सल आया है,मुहम्मद इर्फान के नाम से एक पार्सल आया है
+b073,hinglish,numbers,hinglish_deva_rough,0.091,0.062,59,58,आपका ओ टी पी पांच नौ जीरो दो एक चार है इसे किसी को मत बताइए,"आपका OTP 590214 है, इसे किसी को मत लाएं."
+b074,hinglish,dates_times,hinglish_deva_rough,0.184,0.364,59,59,आपका प्लान पंद्रह नवंबर दो हजार छब्बीस को एक्सपायर हो जाएगा,आपका प्लान 15 नवेंबर 2026 को एक्सपायर हो जाएगा.
+b075,hinglish,questions,hinglish_deva_rough,0.075,0.273,50,50,क्या आप चाहेंगे कि मैं साढे छह बजे दोबारा फोन करूं,क्या आप चाहिंगे कि मैं सारे 6 वजे दोबारा फोन करूँ?
+b076,hinglish,long,hinglish_deva_rough,0.076,0.167,167,169,आपका रिप्लेसमेंट ऑर्डर हमने आज सुबह प्लेस कर दिया है और अगर कल शाम तक डिलीवरी नहीं होती तो आप इसी नंबर पर दोबारा कॉल करके अपना कंप्लेंट नंबर चार आठ दो एक तीन बता दीजिए,आपका replacement order हमने आज सुबह place कर दिया है और अगर कल शाम तक delivery नहीं होती तो आप इसी number पर दुबारा एक और करके अपना complaint number 48213 बता दीगे

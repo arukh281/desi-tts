@@ -1,0 +1,5 @@
+step,val_cer_en_hi,duration_flags,val_loss,export
+250,0.0054,3,3.3744,/kaggle/working/out/e2/select/export_250
+500,0.0443,1,3.115,/kaggle/working/out/e2/select/export_500
+750,0.0212,0,3.0578,/kaggle/working/out/e2/select/export_750
+1000,0.0571,0,3.0547,/kaggle/working/out/e2/select/export_1000

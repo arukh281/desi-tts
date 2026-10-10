@@ -1,0 +1,7 @@
+{
+  "step": 250,
+  "val_cer_en_hi": 0.0054,
+  "duration_flags": 3,
+  "val_loss": 3.3744,
+  "export": "/kaggle/working/out/e2/select/export_250"
+}

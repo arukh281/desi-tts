@@ -1,0 +1,11 @@
+id,lang,xtts_lang,n_chars,text_in,text_used,audio_s,wall_s,rtf,error
+h01,hinglish,en,57,Aapka naya debit card agle hafte tak ghar pahunch jayega.,Aapka naya debit card agle hafte tak ghar pahunch jayega.,5.8,2.736,0.472,
+h02,hinglish,en,67,"Sir, aapki last payment abhi tak hamare system mein nahi dikh rahi.","Sir, aapki last payment abhi tak hamare system mein nahi dikh rahi.",5.8,2.832,0.488,
+h03,hinglish,en,60,Kya aap mujhe apna registered email address bata sakte hain?,Kya aap mujhe apna registered email address bata sakte hain?,6.31,3.19,0.505,
+h04,hinglish,en,54,Hamare technician kal 11 baje aapke ghar aayenge.,Hamare technician kal gyaarah baje aapke ghar aayenge.,6.63,3.22,0.485,
+h05,hinglish,en,81,"Insurance company ne aapki file check kar li hai, amount do din mein credit hoga.","Insurance company ne aapki file check kar li hai, amount do din mein credit hoga.",7.62,3.744,0.492,
+h06,hinglish,en,64,Is mahine aapka mobile bill ₹649 ka bana hai.,Is mahine aapka mobile bill chhe sau unchaas rupaye ka bana hai.,6.68,3.181,0.476,
+h07,hinglish,en,65,Agar aap chahein toh main abhi aapka plan upgrade kar sakta hoon.,Agar aap chahein toh main abhi aapka plan upgrade kar sakta hoon.,6.63,3.08,0.464,
+h08,hinglish,en,58,Aapki ticket booking cancel karne par thoda charge lagega.,Aapki ticket booking cancel karne par thoda charge lagega.,5.75,2.735,0.476,
+h09,hinglish,en,55,Meeting ka link maine aapke WhatsApp par bhej diya hai.,Meeting ka link maine aapke WhatsApp par bhej diya hai.,5.47,2.559,0.468,
+h10,hinglish,en,62,"Aapka password reset ho gaya hai, ab aap login kar sakte hain.","Aapka password reset ho gaya hai, ab aap login kar sakte hain.",6.18,2.847,0.461,

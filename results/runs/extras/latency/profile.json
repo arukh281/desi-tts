@@ -1,0 +1,17 @@
+{
+  "gpu": "Tesla T4",
+  "model_mb_on_disk": 1789.1,
+  "peak_vram_gb": 2.47,
+  "model_load_ms": 30096.93,
+  "indicxlit_load_ms": 118.01,
+  "conditioning_once_ms": 887.1,
+  "n_sentences": 176,
+  "stream_chunk_size": 20,
+  "normalise_ms_median": 0.21,
+  "translit_ms_median_hinglish": 140.3,
+  "ttfa_ms_median": 432.0,
+  "ttfa_ms_p95": 456.1,
+  "synth_ms_median": 2388.16,
+  "rtf_median": 0.51,
+  "rtf_p95": 0.58
+}

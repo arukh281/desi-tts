@@ -1,0 +1,11 @@
+id,lang,xtts_lang,n_chars,text_in,text_used,audio_s,wall_s,rtf,error
+h01,hinglish,hi,54,Aapka naya debit card agle hafte tak ghar pahunch jayega.,आपका अनाया डेबिट इकार्ड आग्ले हफ्ते तक घर पहुंच जाएगा।,5.19,2.472,0.476,
+h02,hinglish,hi,65,"Sir, aapki last payment abhi tak hamare system mein nahi dikh rahi.","आईएसआईआर, आपकी लास्ट पेमेंट अभी तक हमारे सिस्टम में नहीं दिख रही।",5.43,2.5,0.461,
+h03,hinglish,hi,53,Kya aap mujhe apna registered email address bata sakte hain?,क्या आप मुझे अपना रजिस्टर्ड इमेल अड्रेस बता सकते हैं?,5.06,2.193,0.434,
+h04,hinglish,hi,46,Hamare technician kal 11 baje aapke ghar aayenge.,हमारे टेक्निशियन कल ग्यारह बजे आपके घर आयेंगे।,4.64,1.981,0.427,
+h05,hinglish,hi,80,"Insurance company ne aapki file check kar li hai, amount do din mein credit hoga.","इन्श्युरेन्स कंपनी ने आपकी फाइल चेक कर ईएलआई है, अमाउंट दो दिन में क्रेडिट होगा।",6.26,2.992,0.478,
+h06,hinglish,hi,58,Is mahine aapka mobile bill ₹649 ka bana hai.,आईआईएस महिने आपका एमोबाइल बिल छह सौ उनचास रुपये का बना है।,5.53,2.634,0.477,
+h07,hinglish,hi,55,Agar aap chahein toh main abhi aapka plan upgrade kar sakta hoon.,अगर आप चाहें तो मैं अभी आपका प्लान अपग्रेड कर आकता हून।,5.29,2.589,0.489,
+h08,hinglish,hi,52,Aapki ticket booking cancel karne par thoda charge lagega.,आपकी टिकेट बुकिंग कैन्सेल करने पर थोडा चार्ज अलगेगा।,4.87,2.305,0.473,
+h09,hinglish,hi,51,Meeting ka link maine aapke WhatsApp par bhej diya hai.,मीटिंग का इलिंक मैने आपके व्हॉट्सएप पर भेज दिया है।,4.45,2.053,0.461,
+h10,hinglish,hi,56,"Aapka password reset ho gaya hai, ab aap login kar sakte hain.","आपका पासवर्ड रिसेट हो गया है, एबी आप अलोगिन कर सकते हैं।",5.15,2.544,0.494,

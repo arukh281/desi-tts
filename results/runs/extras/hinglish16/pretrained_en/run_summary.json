@@ -1,0 +1,9 @@
+{
+  "model": "pretrained",
+  "model_mb_on_disk": 1789.1,
+  "peak_vram_gb": 2.3,
+  "stream_chunk_size": null,
+  "gpu": "Tesla T4",
+  "n_rows": 16,
+  "n_failed": 0
+}

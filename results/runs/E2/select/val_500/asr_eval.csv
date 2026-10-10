@@ -1,0 +1,12 @@
+id,lang,category,metric,cer,wer,ref_chars,hyp_chars,reference,hypothesis
+p0071,hinglish,fixture,standard,0.208,0.4,57,59,[private prompt],[private prompt]
+p0083,en,fixture,standard,0.022,0.077,58,58,[private prompt],[private prompt]
+p0153,en,fixture,standard,0.0,0.0,71,71,[private prompt],[private prompt]
+p0163,en,fixture,standard,0.0,0.0,61,61,[private prompt],[private prompt]
+p0208,en,fixture,standard,0.1,0.3,49,50,[private prompt],[private prompt]
+p0240,en,fixture,standard,0.0,0.0,61,61,[private prompt],[private prompt]
+p0248,en,fixture,standard,0.171,0.2,44,45,[private prompt],[private prompt]
+p0290,hinglish,fixture,standard,0.308,0.667,47,49,[private prompt],[private prompt]
+p0362,hinglish,fixture,standard,0.667,1.0,29,38,[private prompt],[private prompt]
+p0419,en,fixture,standard,0.0,0.0,55,55,[private prompt],[private prompt]
+p0077,hi,fixture,standard,0.061,0.125,40,40,[private prompt],[private prompt]

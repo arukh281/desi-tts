@@ -1,0 +1,81 @@
+id,lang,category,metric,cer,wer,ref_chars,hyp_chars,reference,hypothesis
+b001,en,conversational,standard,0.0,0.0,67,67,hi thanks for calling give me a moment while i pull up your account,"Hi, thanks for calling. Give me a moment while I pull up your account."
+b002,en,conversational,standard,0.0,0.0,58,58,sorry about the wait the system was a little slow just now,"Sorry about the wait, the system was a little slow just now."
+b003,en,conversational,standard,0.0,0.0,62,62,sure i can help with that could you hold for about two minutes,"Sure, I can help with that. Could you hold for about two minutes?"
+b004,en,conversational,standard,0.0,0.0,71,71,that s done you should get a confirmation message on your phone shortly,That's done. You should get a confirmation message on your phone shortly.
+b005,en,conversational,standard,0.0,0.0,58,58,please confirm the last four digits of your account number,Please confirm the last four digits of your account number.
+b006,en,conversational,standard,0.0,0.0,60,60,before we go ahead i just need to verify a couple of details,"Before we go ahead, I just need to verify a couple of details."
+b007,en,conversational,standard,0.0,0.0,67,67,got it so the parcel was marked delivered but you never received it,"Got it, so the parcel was marked delivered, but you never received it."
+b008,en,conversational,standard,0.0,0.0,52,52,thank you for your patience and have a great evening,Thank you for your patience and have a great evening.
+b009,en,names,standard,0.094,0.167,37,37,hello is this venkatesh iyer speaking,"Hello, is this Venkatesh here speaking?"
+b010,en,names,standard,0.0,0.0,61,61,lakshmi banerjee has been added as the nominee on this policy,Lakshmi Banerjee has been added as the nominee on this policy.
+b011,en,names,standard,0.0,0.0,68,68,your relationship manager anjali reddy will call you back before six,"Your relationship manager, Anjali Reddy, will call you back before 6."
+b012,en,names,standard,0.0,0.0,52,52,the cheque was issued in the name of sunita kulkarni,The cheque was issued in the name of Sunita Kulkarni.
+b013,en,names,standard,0.0,0.0,81,81,your complaint has been assigned to chaitanya deshpande from our escalations team,Your complaint has been assigned to Chaitanya Deshpande from our Escalations team.
+b014,en,names,standard,0.067,0.091,55,55,please ask fatima shaikh to sign the form at the branch,Please ask Fatima Shahid to sign the form at the branch.
+b015,en,names,standard,0.098,0.2,60,60,the delivery partner gurpreet kaur is about ten minutes away,"The delivery partner, Kurtrit Kahur, is about 10 minutes away."
+b016,en,names,standard,0.0,0.0,94,94,a joint account for srinivasan raghunathan and bhuvaneshwari raghunathan needs both signatures,A joint account for Srinivasan Raghunathan and Bhuvaneshwari Raghunathan needs both signatures.
+b017,en,places,standard,0.0,0.0,55,55,your order is out for delivery from our koramangala hub,Your order is out for delivery from our Koramangala Hub.
+b018,en,places,standard,0.015,0.077,77,76,the nearest branch to you is in thiruvananthapuram near the central bus stand,The nearest branch to you is in Tiruvananthapuram near the central bus stand.
+b019,en,places,standard,0.0,0.0,49,49,your train ticket from guwahati has been rebooked,Your train ticket from Guwahati has been rebooked.
+b020,en,places,standard,0.036,0.2,64,64,we do deliver to visakhapatnam usually within three working days,We do deliver to Bisa Kapatnam usually within 3 working days.
+b021,en,places,standard,0.085,0.133,73,74,your new s i m card will be dispatched to the tirunelveli address on file,Your new SIM card will be dispatched to the Tirun Valley Address on file.
+b022,en,places,standard,0.179,0.385,68,69,there is a network outage in parts of hubballi and dharwad right now,There is a net worth outage in parts of her body and darwat right now.
+b023,en,numbers,standard,0.0,0.0,55,55,your one time password is four eight two nine one three,Your one-time password is 482913.
+b024,en,numbers,standard,0.759,0.733,72,115,please call us back on nine eight seven six five four three two one zero,"Please call us back on 9,876,543,210."
+b025,en,numbers,standard,0.564,0.556,47,64,your ticket number is five zero three one seven,"Your ticket number is 50,317."
+b026,en,numbers,standard,0.0,0.0,43,43,you have three missed payments on this card,You have 3 missed payments on this card.
+b027,en,numbers,standard,0.02,0.133,63,62,your data balance is one point five g b for the rest of the day,Your data balance is 1.5 dB for the rest of the day.
+b028,en,numbers,standard,0.0,0.0,76,76,delivery was attempted twice and the third attempt is scheduled for tomorrow,Delivery was attempted twice and the third attempt is scheduled for tomorrow.
+b029,en,numbers,standard,0.0,0.167,61,62,your pincode is five six zero zero three four is that correct,Your pin code is 560034. Is that correct?
+b030,en,numbers,standard,0.582,0.667,66,80,please confirm your flat number one two zero four for the delivery,Please confirm your flat number very important for the rent-free bidding partner.
+b031,en,dates_times,standard,0.0,0.0,62,62,your appointment is scheduled for four thirty in the afternoon,Your appointment is scheduled for 4.30 pm.
+b032,en,dates_times,standard,0.382,0.5,66,54,the payment was received on the third of october twenty twenty six,The payment was received on 3-10-2026.
+b033,en,dates_times,standard,0.0,0.0,43,43,your plan renews on the fifteenth of august,Your plan renews on 15th August.
+b034,en,dates_times,standard,0.0,0.0,80,80,branch hours are nine thirty in the morning to four in the afternoon on weekdays,Branch hours are 9.30 am to 4 pm on weekdays.
+b035,en,dates_times,standard,0.0,0.0,55,55,the outage should be fixed by eleven forty five tonight,The outage should be fixed by 11.45 tonight.
+b036,en,dates_times,standard,0.0,0.0,69,69,your policy expires on the thirty first of december twenty twenty six,Your policy expires on 31st Dec 2026.
+b037,en,currency,standard,0.629,0.533,76,38,your e m i of twelve thousand seven hundred and fifty rupees is due tomorrow,Your AMI of GYR12750 is due tomorrow.
+b038,en,currency,standard,0.393,0.583,67,62,a refund of one lakh twenty five thousand rupees has been initiated,A refund of YOK-18.35 has been initiated.
+b039,en,currency,standard,0.0,0.0,93,93,your outstanding balance is four thousand nine hundred and ninety nine rupees and fifty paise,"Your outstanding balance is Rs. 4,999.5."
+b040,en,currency,standard,0.0,0.0,68,68,the processing fee is four hundred and ninety nine rupees plus g s t,The processing fee is Rs. 499 plus GST.
+b041,en,currency,standard,0.213,0.182,57,55,your loan of two point five lakh rupees has been approved,Your loan of your 2.5 lakh has been approved.
+b042,en,currency,standard,0.429,0.556,50,52,the sanctioned limit is one point two crore rupees,The sanctioned limit is your connect point to growth.
+b043,en,currency,standard,0.0,0.0,72,72,a late fee of seven hundred and fifty rupees has been added to your bill,A late fee of Rs 750 has been added to your bill.
+b044,en,currency,standard,0.404,0.455,57,70,you ll get cashback of fifty rupees on your next recharge,You will get cashback of 850 on your next recharge.
+b045,en,acronyms,standard,0.0,0.0,42,42,your k y c verification has been completed,Your KYC verification has been completed.
+b046,en,acronyms,standard,0.116,0.273,53,56,please share the o t p sent to your registered number,Please share the orthopay sent to your registered number.
+b047,en,acronyms,standard,0.0,0.0,43,43,your u p i i d has been linked successfully,Your UPI ID has been linked successfully.
+b048,en,acronyms,standard,0.0,0.0,39,39,please upload a copy of your p a n card,Please upload a copy of your PAN card.
+b049,en,acronyms,standard,0.025,0.091,50,48,the n e f t transfer will reflect within two hours,The NEF transfer will reflect within 2 hours.
+b050,en,acronyms,standard,0.0,0.0,49,49,your s b i account has been mapped for auto debit,Your SBI account has been mapped for auto debit.
+b051,en,acronyms,standard,0.075,0.333,51,52,for faster support use the i v r menu and press two,For a faster support use the ibar menu and press 2.
+b052,en,acronyms,standard,0.087,0.071,59,64,the a t m card ending in four four two one has been blocked,The ATM card ending in 40421 has been blocked.
+b053,en,questions,standard,0.0,0.0,46,46,would you like me to send the details on s m s,Would you like me to send the details on SMS?
+b054,en,questions,standard,0.0,0.0,53,53,could you tell me your date of birth for verification,Could you tell me your date of birth for verification?
+b055,en,questions,standard,0.0,0.0,47,47,do you want us to go ahead and cancel the order,Do you want us to go ahead and cancel the order?
+b056,en,questions,standard,0.0,0.0,38,38,is the delivery address still the same,Is the delivery address still the same?
+b057,en,questions,standard,0.0,0.0,40,40,how would you rate your experience today,How would you rate your experience today?
+b058,en,long,standard,0.0,0.0,174,174,as per our records your last three payments were made after the due date so a small penalty has been added but if you clear the full amount by the twentieth it will be waived,"As per our records, your last 3 payments were made after the due date. So, a small penalty has been added, but if you clear the full amount by the 20th, it will be waived."
+b059,en,long,standard,0.104,0.171,198,178,your replacement phone has been dispatched and should reach you in four to five working days once it arrives please keep the old device ready because our delivery partner will collect it at the door,"Your replacement phone has been dispatched and should reach you in 4-5 working days. Once it arrives, please keep the old device ready because our delivery partner will adore."
+b060,en,long,standard,0.0,0.053,181,180,to reset your net banking password open the app tap on forgot password enter your customer i d and the o t p we send you and then choose a new password that you have not used before,"To reset your NetBanking password, open the app Tap on Forgot Password, enter your Customer ID and the OTP we send you and then choose a new password that you have not used before."
+b061,hinglish,conversational,hinglish_deva_rough,0.062,0.143,38,40,आपका पेमेंट सक्सेसफुली रिसीव हो गया है,"आपका payment successfully received, हो गया है."
+b062,hinglish,currency,hinglish_deva_rough,0.475,0.6,54,45,आपका ई एम आई आठ हजार पांच सौ रुपये का है और कल ड्यू है,आपका एमी 1500 का है और काल्डू है।
+b063,hinglish,dates_times,hinglish_deva_rough,0.5,0.875,37,41,आपका ऑर्डर चार बजे तक डिलीवर हो जाएगा,आपका ओरेफ और बैजे ताक डिलिवर हो जया निर्फ
+b064,hinglish,questions,hinglish_deva_rough,0.464,0.8,37,32,क्या आप अपना ओ टी पी शेयर कर सकते हैं,यह आप्या उठी पी शेर कार साखत हैं
+b065,hinglish,currency,hinglish_deva_rough,0.446,0.667,70,77,आपके अकाउंट में दो हजार तीन सौ चालीस रुपये का कैशबैक क्रेडिट हो गया है,आपका अकाउंट में यूट वु थाउसन त्री हंड़ एंड फोर्टी का कैश बाक क्रेडिट हो गया है।
+b066,hinglish,numbers,hinglish_deva_rough,0.098,0.167,52,54,आपकी कंप्लेंट नंबर सात सात आठ एक दो रजिस्टर हो गई है,आपकी complaint number 77812 register हो गयी है
+b067,hinglish,names,hinglish_deva_rough,0.333,0.556,38,39,राहुल जी आपका के वाई सी अभी पेंडिंग है,राहूर जी आपका क्याइतिय पर भी पेंडिंग है।
+b068,hinglish,places,hinglish_deva_rough,0.276,0.714,35,29,हमारी पुणे वाली ब्रांच कल बंद रहेगी,हमारी पुनवाली ब्रांच काल बेड़ी
+b069,hinglish,numbers,hinglish_deva_rough,0.405,0.667,53,63,अगर नेटवर्क इश्यू है तो आप एक सौ अट्ठानवे पे कॉल करिए,"Agar Network Issue, ITO Act 198 PE, called Career"
+b070,hinglish,numbers,hinglish_deva_rough,0.152,0.25,40,40,आपका रिचार्ज अट्ठाईस दिन के लिए वैलिड है,आपका recharge 28 दिन के लिए वाली थाए।
+b071,hinglish,names,hinglish_deva_rough,0.2,0.4,49,48,सुनीता जी आपकी पॉलिसी का रिन्यूअल कल तक करना होगा,सुनीता जी आपकी पॉलिसी का रेनिवल कलतात कारना होगा।
+b072,hinglish,names,hinglish_deva_rough,0.188,0.222,40,40,मोहम्मद इरफान के नाम से एक पार्सल आया है,मुहामेद इर्फन के नाम से एक पार्सल आया है
+b073,hinglish,numbers,hinglish_deva_rough,0.318,0.375,59,55,आपका ओ टी पी पांच नौ जीरो दो एक चार है इसे किसी को मत बताइए,"आपका OTP 90214 है, IGC को मैठ बतेएं।"
+b074,hinglish,dates_times,hinglish_deva_rough,0.265,0.364,59,59,आपका प्लान पंद्रह नवंबर दो हजार छब्बीस को एक्सपायर हो जाएगा,आपका प्लान 15-11-2026 को एक्सपायर हो जाएगा.
+b075,hinglish,questions,hinglish_deva_rough,0.6,0.909,50,59,क्या आप चाहेंगे कि मैं साढे छह बजे दोबारा फोन करूं,यह आप चाहेंच की में 6.30 बाजे दोबारा फ़ोन कारून
+b076,hinglish,long,hinglish_deva_rough,0.205,0.417,167,169,आपका रिप्लेसमेंट ऑर्डर हमने आज सुबह प्लेस कर दिया है और अगर कल शाम तक डिलीवरी नहीं होती तो आप इसी नंबर पर दोबारा कॉल करके अपना कंप्लेंट नंबर चार आठ दो एक तीन बता दीजिए,आपका replacement order हमने आज जूजा place कार दिया है और अगर कार शामताई delivery नहीं होती तो आप इसी number पर दुबारा को उतार के आपना complaint number 48230 जिये.
+b079,hi,acronyms,standard,0.179,0.364,38,33,ओ टी पी कभी भी फोन पर किसी को मत बताइए,ओथ कभी भी फोन पर किसी को मत बताईए।
+b080,hi,questions,standard,0.034,0.111,37,37,क्या आपका डिलीवरी का पता अब भी वही है,क्या आपका डिलिवरी का पता अब भी वही है?
+b081,hi,places,standard,0.111,0.286,33,32,आपका पार्सल जयपुर से निकल चुका है,आपका पारसर जैपुर से निकल चुका है।
+b084,hi,names,standard,0.095,0.167,53,49,सुखविंदर सिंह के नाम पर नया कार्ड जारी कर दिया गया है,सुखविंदर सिंग के नाम पर नया कार्ड जारी कर दिया है।

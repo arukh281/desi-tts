@@ -1,0 +1,11 @@
+id,lang,s_per_char,vs_median,flags
+h01,hinglish,0.0893,0.99,
+h02,hinglish,0.0863,0.96,
+h03,hinglish,0.0979,1.09,
+h04,hinglish,0.0978,1.08,
+h05,hinglish,0.0813,0.9,
+h06,hinglish,0.0888,0.98,
+h07,hinglish,0.1029,1.14,
+h08,hinglish,0.0912,1.01,
+h09,hinglish,0.0882,0.98,
+h10,hinglish,0.0945,1.05,

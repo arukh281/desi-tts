@@ -1,0 +1,15 @@
+{
+  "trainable_params": 441018563,
+  "total_params": 518442047,
+  "train_clips": 316,
+  "val_clips": 17,
+  "steps_per_epoch": 158,
+  "epochs": 13,
+  "lr": 5e-06,
+  "batch": 2,
+  "grad_accum": 8,
+  "fp16": false,
+  "steps_done": 2054,
+  "run_dir": "/kaggle/working/out/e3/train/desi_tts_gpt-October-10-2026_04+53PM-b22c5f3",
+  "peak_vram_gb": 9.38
+}

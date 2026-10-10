@@ -1,0 +1,9 @@
+{
+  "model": "/kaggle/working/out/e4/select/export_2000",
+  "model_mb_on_disk": 1789.1,
+  "peak_vram_gb": 2.3,
+  "stream_chunk_size": null,
+  "gpu": "Tesla T4",
+  "n_rows": 10,
+  "n_failed": 0
+}

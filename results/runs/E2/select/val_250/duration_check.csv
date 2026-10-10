@@ -1,0 +1,12 @@
+id,lang,s_per_char,vs_median,flags
+p0071,hinglish,0.0984,0.96,
+p0083,en,0.0731,0.87,
+p0153,en,0.1406,1.67,stretched 1.67x
+p0163,en,0.0748,0.89,
+p0208,en,0.0844,1.0,
+p0240,en,0.0711,0.84,
+p0248,en,0.0918,1.09,
+p0290,hinglish,0.1022,1.0,
+p0362,hinglish,0.211,2.06,stretched 2.06x; hyp_longer 85/29 chars
+p0419,en,0.14,1.66,stretched 1.66x
+p0077,hi,0.1041,1.0,

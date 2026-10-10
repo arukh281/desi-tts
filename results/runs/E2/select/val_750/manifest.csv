@@ -1,0 +1,12 @@
+id,lang,xtts_lang,n_chars,text_in,text_used,audio_s,wall_s,rtf,error
+p0071,hinglish,en,58,[private prompt],[private prompt],4.64,2.041,0.44,
+p0083,en,en,59,[private prompt],[private prompt],4.13,1.806,0.438,
+p0153,en,en,72,[private prompt],[private prompt],4.96,2.166,0.437,
+p0163,en,en,62,[private prompt],[private prompt],4.45,1.935,0.435,
+p0208,en,en,50,[private prompt],[private prompt],4.09,1.827,0.447,
+p0240,en,en,62,[private prompt],[private prompt],4.96,2.173,0.438,
+p0248,en,en,45,[private prompt],[private prompt],3.43,1.524,0.444,
+p0290,hinglish,en,49,[private prompt],[private prompt],4.6,2.004,0.436,
+p0362,hinglish,en,31,[private prompt],[private prompt],3.66,1.707,0.466,
+p0419,en,en,56,[private prompt],[private prompt],4.82,2.088,0.433,
+p0077,hi,hi,41,[private prompt],[private prompt],4.13,1.826,0.442,
