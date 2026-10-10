@@ -38,7 +38,8 @@ def e3_model() -> str:
     return str(IN / "desi-tts-e3-keep-extras/out/e3/select" / Path(sel["export"]).name)
 
 
-def run_jobs(jobs: list[tuple[Path, list[str]]]) -> None:
+def run_jobs(jobs: list[tuple[Path, list[str]]], deva: str | None = None) -> None:
+    """deva: Devanagari file for Hinglish scoring (default: the text file itself, as Block 11 used)."""
     import torch
 
     free = queue.Queue()
@@ -55,7 +56,7 @@ def run_jobs(jobs: list[tuple[Path, list[str]]]) -> None:
                                       ("eval/duration_check.py", None)):
                     if extra is None:
                         extra = ["--synth-dir", str(out)] + (["--benchmark", cmd[cmd.index("--benchmark") + 1],
-                                                               "--deva", cmd[cmd.index("--benchmark") + 1]]
+                                                               "--deva", deva or cmd[cmd.index("--benchmark") + 1]]
                                                               if script.endswith("asr_eval.py") else [])
                     subprocess.run([sys.executable, script, *extra], check=True, cwd=ROOT, env=env,
                                    stdout=log, stderr=subprocess.STDOUT)

@@ -23,6 +23,7 @@ Examples (on Kaggle, through scripts/kaggle_run.sh):
 import argparse
 import csv
 import json
+import re
 import os
 import sys
 import time
@@ -115,6 +116,12 @@ def main() -> None:
     ap.add_argument("--hinglish-route", choices=["en", "deva"], default="en",
                     help="deva: transliterate Hinglish to Devanagari and send it as Hindi (Part 7 fix)")
     ap.add_argument("--seed", type=int, default=1234)
+    # Names experiment (Block 15). Name rows = benchmark rows in the names/places categories.
+    ap.add_argument("--respell", help="TSV name<TAB>respelling, applied to English rows after normalising")
+    ap.add_argument("--name-temperature", type=float, help="temperature for name rows only")
+    ap.add_argument("--babble-guard", action="store_true",
+                    help="if a clip is longer than 1.5x the usual seconds per character, retry with another "
+                         "seed (up to 2 times) and keep the shortest take")
     ap.add_argument("--sampling", default=str(ROOT / "configs" / "sampling.json"))
     ap.add_argument("--stream", action="store_true", help="also measure time to first audio")
     ap.add_argument("--chunk-size", type=int, default=20,
@@ -144,6 +151,14 @@ def main() -> None:
     gen = {k: settings[k] for k in ("temperature", "length_penalty", "repetition_penalty",
                                     "top_k", "top_p", "speed", "enable_text_splitting")}
 
+    respell = {}
+    if args.respell:
+        respell = {r["name"].lower(): r["respelling"]
+                   for r in csv.DictReader(open(args.respell, encoding="utf-8"), delimiter="\t")}
+
+    def respelled(text: str) -> str:
+        return re.sub(r"[A-Za-z]+", lambda m: respell.get(m.group(0).lower(), m.group(0)), text)
+
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     json.dump({**vars(args), "sampling_used": settings}, open(out / "run_args.json", "w"), indent=2)
@@ -154,7 +169,7 @@ def main() -> None:
 
     columns = ["id", "lang", "xtts_lang", "n_chars", "text_in", "text_used", "audio_s", "wall_s", "rtf"]
     columns += ["ttfa_s"] if args.stream else []
-    columns += ["error"]
+    columns += ["retries", "error"]
     failed = 0
     with open(out / "manifest.csv", "w", encoding="utf-8", newline="") as f:
         manifest = csv.DictWriter(f, fieldnames=columns)
@@ -168,6 +183,10 @@ def main() -> None:
                 text, lang = to_devanagari(row["text"])[0], "hi"
             else:
                 text = prepare_text(row["text"], row["lang"], args.normalize == "on")
+            is_name = row.get("category") in ("names", "places")
+            if respell and lang == "en":
+                text = respelled(text)
+            row_gen = dict(gen, temperature=args.name_temperature) if is_name and args.name_temperature else gen
             torch.manual_seed(args.seed)  # same seed per sentence, for every model
 
             torch.cuda.synchronize()
@@ -182,7 +201,15 @@ def main() -> None:
                         parts += [np.asarray(model.inference(piece, lang, latent, embedding, **gen)["wav"]), gap]
                     wav = np.concatenate(parts[:-1])
                 else:
-                    wav = model.inference(text, lang, latent, embedding, **gen)["wav"]
+                    wav = model.inference(text, lang, latent, embedding, **row_gen)["wav"]
+                    retries = 0
+                    # Usual seconds per character for the final model (results/final E3 manifests: en 0.078, hi 0.099).
+                    limit = 1.5 * {"en": 0.0776, "hi": 0.0993}.get(lang, 0.0776) * len(text)
+                    while args.babble_guard and len(wav) / sr > limit and retries < 2:
+                        retries += 1
+                        torch.manual_seed(args.seed + 1000 * retries)
+                        again = model.inference(text, lang, latent, embedding, **row_gen)["wav"]
+                        wav = again if len(again) < len(wav) else wav
             except Exception as e:  # e.g. XTTS's own number expansion crashing on raw Hindi digits
                 failed += 1
                 print(f"{row['id']} FAILED: {type(e).__name__}: {e}", flush=True)
@@ -197,7 +224,8 @@ def main() -> None:
             sf.write(out / f"{row['id']}.wav", wav, sr)
             entry = {"id": row["id"], "lang": row["lang"], "xtts_lang": lang, "n_chars": len(text),
                      "text_in": row["text"], "text_used": text, "audio_s": round(seconds, 2),
-                     "wall_s": round(wall, 3), "rtf": round(wall / seconds, 3) if seconds else ""}
+                     "wall_s": round(wall, 3), "rtf": round(wall / seconds, 3) if seconds else "",
+                     "retries": retries if not (args.split_long and len(text) > args.split_long) else 0}
 
             if args.stream:
                 torch.manual_seed(args.seed)
