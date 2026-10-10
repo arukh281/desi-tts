@@ -1,0 +1,21 @@
+id,lang,category,metric,cer,wer,ref_chars,hyp_chars,reference,hypothesis
+n01,en,names,standard,0.025,0.143,46,46,hello am i speaking with subramaniam natarajan,"Hello, am I speaking with Sabramaniam Natarajan?"
+n02,en,names,standard,0.0,0.0,63,63,priyanka chaturvedi has been added as a nominee on this account,Priyanka Chaturvedi has been added as a nominee on this account.
+n03,en,names,standard,0.091,0.182,65,64,your request was approved by harpreet dhillon from the loans team,Your request was approved by Arpreet Deolong from the Loans team.
+n04,en,names,standard,0.043,0.091,56,55,a parcel for zainab qureshi is waiting at the front desk,A parcel for Zainab Qureyi is waiting at the front desk.
+n05,en,names,standard,0.0,0.0,68,68,raghavendra hegde will visit your home tomorrow for the verification,Raghavendra Hegde will visit your home tomorrow for the verification.
+n06,en,names,standard,0.125,0.111,56,52,please confirm that the card holder is nandini mukherjee,Please confirm that the card holder is Nandini Karji.
+n07,en,names,standard,0.0,0.0,56,56,vikramaditya rathore signed for the delivery at the gate,Vikramaditya Rathore signed for the delivery at the gate.
+n08,en,names,standard,0.019,0.1,63,62,kavitha ramaswamy from customer care will call you back shortly,Kavita Ramaswamy from Customer Care will call you back shortly.
+n09,en,names,standard,0.045,0.125,51,50,is this the right number for aniruddha bhattacharya,Is this the right number for Aniruddha Bhattatarya?
+n10,en,names,standard,0.0,0.0,61,61,your advisor ashwin pillai has sent you the updated statement,Your advisor Ashwin Pillai has sent you the updated statement.
+n11,en,places,standard,0.0,0.0,56,56,your flight to rajahmundry has been moved to the evening,Your flight to Rajahmundry has been moved to the evening.
+n12,en,places,standard,0.0,0.0,53,53,we have a new branch opening in coimbatore next month,We have a new branch opening in Coimbatore next month.
+n13,en,places,standard,0.0,0.0,67,67,the courier left thanjavur this morning and should arrive on friday,The courier left Thanjavur this morning and should arrive on Friday.
+n14,en,places,standard,0.0,0.0,56,56,your train from vijayawada is running about an hour late,Your train from Vijayawada is running about an hour late.
+n15,en,places,standard,0.02,0.1,60,59,the replacement card will be sent to your aurangabad address,The replacement card will be sent to your Arangabad address.
+n16,en,places,standard,0.0,0.0,56,56,our service centre in jabalpur is closed for the holiday,Our service centre in Jabalpur is closed for the holiday.
+n17,en,places,standard,0.0,0.0,51,51,your booking for the hotel in dehradun is confirmed,Your booking for the hotel in Dehradun is confirmed.
+n18,en,places,standard,0.146,0.111,49,48,the package is held at the puducherry sorting hub,The package is held at the Perachari Sorting Hub.
+n19,en,places,standard,0.042,0.2,57,57,a technician from kozhikode will be assigned to your case,A technician from Koji Kode will be assigned to your case.
+n20,en,places,standard,0.071,0.143,48,46,is your current address still in tiruchirappalli,Is your current address still in Tirukirapalli?
