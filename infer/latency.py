@@ -7,8 +7,8 @@ voice and timed separately (a server would cache them). Also reports model
 size on disk, peak VRAM, and RTF.
 
 Usage (on Kaggle):
-  python infer/profile.py --model <export dir> --ref REF.wav ... [--benchmark FILE] [--repeat 2]
-Writes $OUT_DIR/profile/profile.csv and profile.json.
+  python infer/latency.py --model <export dir> --ref REF.wav ... [--benchmark FILE] [--repeat 2]
+Writes $OUT_DIR/latency/profile.csv and profile.json.
 """
 import argparse
 import csv
@@ -92,7 +92,7 @@ def main() -> None:
                              "audio_s": round(audio_s, 2), "rtf": round(total_ms / 1000 / audio_s, 3)})
             print(out_rows[-1], flush=True)
 
-    out = Path(os.environ.get("OUT_DIR", "outputs")) / "profile"
+    out = Path(os.environ.get("OUT_DIR", "outputs")) / "latency"
     out.mkdir(parents=True, exist_ok=True)
     with open(out / "profile.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(out_rows[0]))

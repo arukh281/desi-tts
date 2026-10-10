@@ -6,7 +6,7 @@
            benchmark nor the prompts (benchmark/hinglish_heldout.tsv)
   ceiling  speaker similarity of my REAL val recordings vs the reference clips
            (same encoder), i.e. what a perfect copy of my voice would score
-  profile  infer/profile.py on the fine-tuned model (normaliser + IndicXlit)
+  profile  infer/latency.py on the fine-tuned model (normaliser + IndicXlit)
 
 Usage (on Kaggle):
   python eval/extras.py --model <export dir> --data <processed dataset> --ref REF.wav ...
@@ -88,7 +88,7 @@ def main() -> None:
     heldout = ROOT / "benchmark" / "hinglish_heldout.tsv"
     two_by_two("heldout10", heldout, heldout, args.model, args.ref)
     os.environ["OUT_DIR"] = str(OUT)
-    py("infer/profile.py", "--model", args.model, "--ref", *args.ref, "--repeat", "2")
+    py("infer/latency.py", "--model", args.model, "--ref", *args.ref, "--repeat", "2")
 
 
 if __name__ == "__main__":
