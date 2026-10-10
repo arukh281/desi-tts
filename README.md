@@ -45,6 +45,8 @@ DAYS.md          short daily log
 
 ## How to reproduce
 
+**What you can reproduce from this repo alone.** My voice recordings and the trained weights are private, so training and synthesis can't be rerun from the repo. Every number table that comes from results is rebuilt from the files in `results/` with one script, no GPU and no private data: `scripts/reproduce_tables.sh` (afterwards `git status results/` should show no changes). The speaker-consistency, prosody, question-pitch and names-on-real-takes tables need the private audio; their scripts are in `eval/` and the outputs are in `results/`. **The dataset and weights are available to reviewers on request.**
+
 GPU steps run on a free Kaggle T4 through `scripts/kaggle_run.sh`, which runs a repo script in a private kernel at the current pushed commit and downloads the output to `outputs/kaggle/<run>/`. My recordings and the processed data are private Kaggle datasets (`desi-tts-own-voice`, `desi-tts-reference`), so the data steps need your own recordings. Everything from step 8 on runs on the result files in `results/` without a GPU.
 
 1. **Setup (Mac):** `python3 -m venv .venv && .venv/bin/pip install -r recording/requirements.txt -r data_prep/requirements.txt`
