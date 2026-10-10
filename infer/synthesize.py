@@ -12,6 +12,8 @@ conditioning latents are computed once and reused for every sentence) or from
 Every compared model must use the same --ref, --seed and configs/sampling.json.
 
 Benchmark lang "hinglish" is sent to XTTS as "en" (Roman script), "hi" as "hi".
+With --hinglish-route deva, Hinglish is first turned into Devanagari
+(text/translit.py: normaliser + IndicXlit) and sent as "hi" instead.
 
 Examples (on Kaggle, through scripts/kaggle_run.sh):
   python infer/synthesize.py --model pretrained --speaker "Ana Florence" --sentence en "Hello there."
@@ -88,6 +90,8 @@ def main() -> None:
     voice.add_argument("--ref", nargs="+", help="reference wav(s) of the target voice")
     voice.add_argument("--speaker", help="stock XTTS speaker name (pipeline testing only)")
     ap.add_argument("--normalize", choices=["on", "off"], default="off")
+    ap.add_argument("--hinglish-route", choices=["en", "deva"], default="en",
+                    help="deva: transliterate Hinglish to Devanagari and send it as Hindi (Part 7 fix)")
     ap.add_argument("--seed", type=int, default=1234)
     ap.add_argument("--sampling", default=str(ROOT / "configs" / "sampling.json"))
     ap.add_argument("--stream", action="store_true", help="also measure time to first audio")
@@ -135,7 +139,13 @@ def main() -> None:
         manifest.writeheader()
         for row in rows:
             lang = XTTS_LANG[row["lang"]]
-            text = prepare_text(row["text"], row["lang"], args.normalize == "on")
+            if row["lang"] == "hinglish" and args.hinglish_route == "deva":
+                sys.path.insert(0, str(ROOT))
+                from text.translit import to_devanagari
+
+                text, lang = to_devanagari(row["text"])[0], "hi"
+            else:
+                text = prepare_text(row["text"], row["lang"], args.normalize == "on")
             torch.manual_seed(args.seed)  # same seed per sentence, for every model
 
             torch.cuda.synchronize()

@@ -35,6 +35,7 @@ def main() -> None:
     voice.add_argument("--speaker")
     ap.add_argument("--sim-ref", help="with --speaker: id of an output clip to use as the similarity reference")
     ap.add_argument("--normalize", choices=["on", "off"], default="off")
+    ap.add_argument("--hinglish-route", choices=["en", "deva"], default="en")
     ap.add_argument("--seed", default="1234")
     ap.add_argument("--stream", action="store_true")
     ap.add_argument("--synth-from", help="reuse audio from an earlier synth folder instead of synthesising "
@@ -43,7 +44,8 @@ def main() -> None:
 
     out = Path(os.environ.get("OUT_DIR", "outputs")) / args.name
     synth = ["infer/synthesize.py", "--model", args.model, "--benchmark", args.benchmark,
-             "--normalize", args.normalize, "--seed", args.seed, "--out", str(out)]
+             "--normalize", args.normalize, "--hinglish-route", args.hinglish_route,
+             "--seed", args.seed, "--out", str(out)]
     synth += ["--ref", *args.ref] if args.ref else ["--speaker", args.speaker]
     synth += ["--stream"] if args.stream else []
     if args.synth_from:

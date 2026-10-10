@@ -50,8 +50,15 @@ def main() -> None:
     ap.add_argument("--data", required=True)
     ap.add_argument("--ref", nargs="+", required=True)
     ap.add_argument("--sessions", help="comma-separated sessions to train on, e.g. session_1 (default: all)")
+    ap.add_argument("--bench", default="raw,norm",
+                    help="benchmark variants: raw (no normaliser), norm (normaliser), deva (normaliser + "
+                         "Hinglish via Devanagari/hi)")
     ap.add_argument("train_args", nargs=argparse.REMAINDER, help="passed to train_gpt.py (after --)")
     args = ap.parse_args()
+    variants = {"raw": ["--normalize", "off"], "norm": ["--normalize", "on"],
+                "deva": ["--normalize", "on", "--hinglish-route", "deva"]}
+    names = {"raw": "bench_norm_off", "norm": "bench_norm_on", "deva": "bench_deva"}
+    args.bench = [(names[v], variants[v]) for v in args.bench.split(",")]
     extra = [a for a in args.train_args if a != "--"]
 
     out = Path(os.environ.get("OUT_DIR", "outputs")) / args.name
@@ -62,10 +69,9 @@ def main() -> None:
     run("train/select_checkpoint.py", "--run", str(train), "--data", args.data, "--ref", *args.ref,
         "--out", str(select))
     chosen = json.load(open(select / "selected.json"))["export"]
-    for norm in ("off", "on"):
-        os.environ["OUT_DIR"] = str(out)
-        run("eval/evaluate.py", "--name", f"bench_norm_{norm}", "--model", chosen, "--ref", *args.ref,
-            "--normalize", norm, "--stream")
+    os.environ["OUT_DIR"] = str(out)
+    for name, extra_eval in args.bench:
+        run("eval/evaluate.py", "--name", name, "--model", chosen, "--ref", *args.ref, "--stream", *extra_eval)
 
     # Keep logs, CSVs and audio; drop the multi-GB weights so Kaggle doesn't ship them back.
     for p in list(out.rglob("*.pth")):

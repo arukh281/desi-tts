@@ -7,8 +7,12 @@ For each milestone saved by train_gpt.py (25/50/75/100% of training) it:
      meaningless, see eval/asr_eval.py), duration flags, and the val loss
      logged nearest to that step
 
-Rule: lowest mean val CER (en + hi); within 0.01 of the best, the lower val
-loss wins. Writes selection.csv (all milestones) and selected.json.
+Rule: lowest val loss, among milestones whose val CER (en + hi) is within 0.05
+of the best and whose duration flags are within 2 of the fewest. Val loss is
+the main signal because CER on ~10 val clips is too noisy to rank by: on E2 it
+picked step 250 of 1000 and the voice came out barely adapted. The ASR and
+duration checks stay as guards against a checkpoint that babbles.
+Writes selection.csv (all milestones) and selected.json.
 
 Usage (on Kaggle):
   python train/select_checkpoint.py --run OUT/train --data DATA --ref REF.wav [...]
@@ -86,8 +90,9 @@ def main() -> None:
         (export / "model.pth").unlink()  # keep disk free; re-export the chosen one below
 
     best_cer = min(r["val_cer_en_hi"] for r in results)
-    close = [r for r in results if r["val_cer_en_hi"] <= best_cer + 0.01]
-    chosen = min(close, key=lambda r: r["val_loss"] if r["val_loss"] is not None else float("inf"))
+    fewest_flags = min(r["duration_flags"] for r in results)
+    ok = [r for r in results if r["val_cer_en_hi"] <= best_cer + 0.05 and r["duration_flags"] <= fewest_flags + 2]
+    chosen = min(ok, key=lambda r: r["val_loss"] if r["val_loss"] is not None else float("inf"))
     with open(out / "selection.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(results[0]))
         w.writeheader()
