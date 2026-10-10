@@ -48,7 +48,7 @@ DAYS.md          short daily log
 GPU steps run on a free Kaggle T4 through `scripts/kaggle_run.sh`, which runs a repo script in a private kernel at the current pushed commit and downloads the output to `outputs/kaggle/<run>/`. My recordings and the processed data are private Kaggle datasets (`desi-tts-own-voice`, `desi-tts-reference`), so the data steps need your own recordings. Everything from step 8 on runs on the result files in `results/` without a GPU.
 
 1. **Setup (Mac):** `python3 -m venv .venv && .venv/bin/pip install -r recording/requirements.txt -r data_prep/requirements.txt`
-2. **Tests:** `.venv/bin/python -m unittest discover -s tests`
+2. **Tests:** `.venv/bin/pip install pytest && .venv/bin/python -m pytest -q tests` (46 pass; one normaliser check is skipped unless the private `recording/prompts.tsv` is present). No GPU needed; the data-prep test downloads the 45 MB IndicXlit model once.
 3. **Record (Mac):** `python recording/order.py`, then `python recording/record.py --reference` and `python recording/record.py --session 1` (and `--session 2`)
 4. **Prepare data (Mac):** `python data_prep/prepare.py`, upload with `scripts/upload_dataset.sh data/processed desi-tts-own-voice`, run `data_prep/asr_check.py` on Kaggle, copy `asr.csv` into `data/processed/`, then `python data_prep/finalize.py && python data_prep/dataset_card.py` and upload again
 5. **Fine-tune one experiment (Kaggle):** train, pick a checkpoint on val, run the benchmark:

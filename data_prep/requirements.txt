@@ -1,5 +1,8 @@
-# Mac-only, for data_prep/prepare.py, finalize.py, dataset_card.py. No ML.
+# Mac-only, for data_prep/prepare.py, finalize.py, dataset_card.py.
+# finalize.py scores Hindi with IndicXlit (small CPU model) for Latin loanwords.
 numpy
 soundfile
 scipy
 pyloudnorm
+ctranslate2
+huggingface_hub
