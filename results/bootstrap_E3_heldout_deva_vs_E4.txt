@@ -1,0 +1,13 @@
+
+### CER: E4 vs E3_deva (seeds: 3 vs 3; 10 sentences)
+
+| subset | n | E3_deva | E4 | E4 - E3_deva | 95% interval | real? |
+|---|---|---|---|---|---|---|
+| all | 10 | 0.119 | 0.126 | +0.007 | [-0.016, +0.032] | no |
+| lang=hinglish | 10 | 0.119 | 0.126 | +0.007 | [-0.016, +0.032] | no |
+
+### CER per category: mean over seeds (min-max of per-seed means)
+
+| category | n | E3_deva | E4 |
+|---|---|---|---|
+| fixture | 10 | 0.119 (0.107-0.131) | 0.126 (0.111-0.149) |
