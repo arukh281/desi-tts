@@ -1,5 +1,5 @@
 {
-  "model": "/kaggle/working/out/e2/select/export_250",
+  "model": "/kaggle/working/out/e2/select/export_750",
   "benchmark": "/kaggle/working/desi-tts/benchmark/benchmark.tsv",
   "ref": [
     "/tmp/in/desi-tts-reference/ref_en.wav",

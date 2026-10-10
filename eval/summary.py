@@ -5,9 +5,14 @@ CER: per sentence averaged over seeds, crashed rows = 1.0 (same rule as
 eval/bootstrap.py), then averaged over sentences. Speaker similarity: mean cosine
 over all seeds and sentences. Writes results/summary.md.
 
+Also writes results/training.md: per training run, clips, steps, the val
+selection table's pick, peak VRAM and training time (sum of seconds per step
+from losses.csv, so setup and evaluation are not included).
+
 Usage:  python eval/summary.py
 """
 import csv
+import json
 import statistics
 import sys
 from collections import defaultdict
@@ -45,6 +50,24 @@ def main() -> None:
     text = "\n".join(lines) + "\n"
     (ROOT / "results" / "summary.md").write_text(text)
     print(text)
+    train = training()
+    (ROOT / "results" / "training.md").write_text(train)
+    print(train)
+
+
+def training() -> str:
+    lines = ["| run | train / val clips | steps | picked step | median s/step | training min | peak VRAM GB |",
+             "|---|---|---|---|---|---|---|"]
+    for run in sorted((ROOT / "results" / "runs").iterdir()):
+        summary, losses = run / "train" / "train_summary.json", run / "train" / "losses.csv"
+        if not (summary.exists() and losses.exists()):
+            continue
+        t = json.loads(summary.read_text())
+        secs = [float(r["sec_per_step"]) for r in csv.DictReader(open(losses)) if r["split"] == "train" and r["sec_per_step"]]
+        picked = json.loads((run / "select" / "selected.json").read_text()).get("step", "?")
+        lines.append(f"| {run.name} | {t['train_clips']} / {t['val_clips']} | {t['steps_done']} | {picked} | "
+                     f"{statistics.median(secs):.2f} | {sum(secs) / 60:.1f} | {t['peak_vram_gb']} |")
+    return "\n".join(lines) + "\n"
 
 
 if __name__ == "__main__":
