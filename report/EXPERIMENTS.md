@@ -1,6 +1,6 @@
 # Experiment table
 
-CER = Whisper large-v3 character error rate on the 88-sentence benchmark (lower is better). Hinglish CER is a rough score: Hindi Whisper against my hand-written Devanagari. "Sim" = ECAPA speaker similarity to my reference clip in the same language. Single-seed numbers come from one run (seed 1234); 3-seed numbers average seeds 1-3 with a paired bootstrap 95% interval over sentences. A crashed sentence counts as CER 1.0. Every number links to a file in [`results/`](../results).
+CER = Whisper large-v3 character error rate on the 88-sentence benchmark (lower is better). Hinglish CER is a rough score: Hindi Whisper against AI-drafted Devanagari references (checked by me). "Sim" = ECAPA speaker similarity to my reference clip in the same language. Single-seed numbers come from one run (seed 1234); 3-seed numbers average seeds 1-3 with a paired bootstrap 95% interval over sentences. A crashed sentence counts as CER 1.0. Every number links to a file in [`results/`](../results).
 
 | # | Experiment | Change | Result | Conclusion |
 |---|---|---|---|---|

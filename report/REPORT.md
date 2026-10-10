@@ -41,10 +41,10 @@ Final run E3: sessions 1+2 (316 train / 17 val clips), learning rate 5e-6 (the c
 
 ## 5. Benchmark and experiments
 
-**Benchmark.** 88 sentences I wrote and froze (commit dc343ba, 7 Oct) before any training: 60 Indian English in 9 categories (conversational, names, places, numbers, dates and times, currency, acronyms, questions, long), 16 Hinglish and 12 Hindi. Names and places are tagged *seen* (in my prompts) or *unseen*. The benchmark is used only for final comparisons. Every choice (checkpoint, sampling, splitting, E4) was made on val clips or on two held-out sets: 10 extra Hinglish sentences and 5 long sentences.
+**Benchmark.** 88 sentences, drafted with AI, reviewed by me and frozen (commit dc343ba, 7 Oct) before any training: 60 Indian English in 9 categories (conversational, names, places, numbers, dates and times, currency, acronyms, questions, long), 16 Hinglish and 12 Hindi. Names and places are tagged *seen* (in my prompts) or *unseen*. The benchmark is used only for final comparisons. Every choice (checkpoint, sampling, splitting, E4) was made on val clips or on two held-out sets: 10 extra Hinglish sentences and 5 long sentences.
 
 **Metrics.**
-- *Intelligibility:* Whisper large-v3 CER against the spoken form. Hinglish is scored with Hindi Whisper against my hand-written Devanagari, because English Whisper translates it. That makes Hinglish CER a rough signal.
+- *Intelligibility:* Whisper large-v3 CER against the spoken form. Hinglish is scored with Hindi Whisper against AI-drafted Devanagari references, because English Whisper translates it. That makes Hinglish CER a rough signal.
 - *Voice:* ECAPA speaker similarity to my reference clip in the same language. Similarity drops across languages even for one stock voice, so I only compare within a language.
 - *Delivery:* duration checks for stretched, rushed or babbling clips.
 - *Noise:* final numbers average 3 seeds. A paired bootstrap over sentences (10,000 resamples) gives a 95% interval, and I call a difference real only if the interval excludes 0. A crashed sentence counts as CER 1.0, so a system can't look better by skipping what it can't say.
@@ -80,7 +80,7 @@ Fine-tuning alone (E3 − E1) is −0.041 [−0.083, −0.009] overall and −0.
 
 How to read the real-voice row: it is my own val recordings scored with the same Whisper and ECAPA settings. It is a ceiling for similarity and a floor for CER, but it uses different sentences and only 17 clips. English synthetic speech (0.730) is close to my real voice (0.763). Hindi synthetic is *above* real (0.706 vs 0.615), probably because synthesis is conditioned on the reference clip, so it can sound more like that clip than my other takes do. Real English CER (0.100) being worse than synthetic is a small-sample oddity: 8 clips with names and numbers.
 
-**Listening test.** One joint session: three people listened together and agreed each answer, so it is one consensus judgement, not three independent ones. I played the clips and didn't rate. The page was blind and in random order: 22 A/B pairs, 16 E1 vs E3, 4 Hinglish Roman vs Devanagari on E3, and 2 repeats with A and B swapped. The E3 audio was from E3 run 1, whose training matches run 2 exactly ([listening](../results/listening_joint_session1.md)).
+**Listening test.** One joint session: three people listened together and agreed each answer, so it is one consensus judgement, not three independent ones. The page was blind and in random order: 22 A/B pairs, 16 E1 vs E3, 4 Hinglish Roman vs Devanagari on E3, and 2 repeats with A and B swapped. The E3 audio was from E3 run 1, whose training matches run 2 exactly ([listening](../results/listening_joint_session1.md)).
 
 | question | result |
 |---|---|

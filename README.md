@@ -11,7 +11,7 @@ Code and writing drafted with AI assistance; recordings, decisions and listening
 
 ## Result in one table
 
-Benchmark of 88 sentences, Whisper large-v3 character error rate (lower is better), averaged over 3 seeds. Hinglish is a rough score (Hindi Whisper against hand-written Devanagari). Sim = speaker similarity to my reference clip.
+Benchmark of 88 sentences, Whisper large-v3 character error rate (lower is better), averaged over 3 seeds. Hinglish is a rough score (Hindi Whisper against AI-drafted Devanagari references). Sim = speaker similarity to my reference clip.
 
 | | pretrained XTTS-v2 + normaliser | **final** | difference, 95% interval |
 |---|---|---|---|
