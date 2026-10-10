@@ -53,7 +53,10 @@ def main() -> None:
         print(f"reusing audio from {args.synth_from}")
     else:
         run(*synth)
-    run("eval/asr_eval.py", "--synth-dir", str(out), "--benchmark", args.benchmark)
+    # Texts that carry their own Devanagari versions (held-out sets) are scored against those.
+    header = open(args.benchmark, encoding="utf-8").readline().rstrip("\n").split("\t")
+    deva = ["--deva", args.benchmark] if "text_deva" in header else []
+    run("eval/asr_eval.py", "--synth-dir", str(out), "--benchmark", args.benchmark, *deva)
     if args.ref:
         sim_ref = args.ref
     elif args.sim_ref:

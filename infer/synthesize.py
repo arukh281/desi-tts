@@ -72,6 +72,26 @@ def conditioning(model, refs: list[str] | None, speaker: str | None, s: dict):
     )
 
 
+def split_text(text: str, max_chars: int) -> list[str]:
+    """Sentence ends first (. ? ! । ;), then commas, for pieces still over max_chars."""
+    import re
+
+    pieces = []
+    for sentence in re.split(r"(?<=[.?!।;])\s+", text.strip()):
+        if len(sentence) <= max_chars:
+            pieces.append(sentence)
+            continue
+        current = ""
+        for clause in re.split(r"(?<=,)\s+", sentence):
+            if current and len(current) + len(clause) + 1 > max_chars:
+                pieces.append(current)
+                current = clause
+            else:
+                current = f"{current} {clause}".strip()
+        pieces.append(current)
+    return [p for p in pieces if p]
+
+
 def prepare_text(text: str, lang: str, normalize: bool) -> str:
     """With --normalize on, rewrite ₹, numbers, dates, times and acronyms into spoken form."""
     if not normalize:
@@ -90,6 +110,8 @@ def main() -> None:
     voice.add_argument("--ref", nargs="+", help="reference wav(s) of the target voice")
     voice.add_argument("--speaker", help="stock XTTS speaker name (pipeline testing only)")
     ap.add_argument("--normalize", choices=["on", "off"], default="off")
+    ap.add_argument("--split-long", type=int, default=0, metavar="CHARS",
+                    help="split text longer than CHARS at sentence/clause boundaries and join the audio (0 = off)")
     ap.add_argument("--hinglish-route", choices=["en", "deva"], default="en",
                     help="deva: transliterate Hinglish to Devanagari and send it as Hindi (Part 7 fix)")
     ap.add_argument("--seed", type=int, default=1234)
@@ -151,7 +173,16 @@ def main() -> None:
             torch.cuda.synchronize()
             start = time.perf_counter()
             try:
-                wav = model.inference(text, lang, latent, embedding, **gen)["wav"]
+                if args.split_long and len(text) > args.split_long:
+                    import numpy as np
+
+                    gap = np.zeros(int(0.25 * sr), dtype="float32")  # short pause between pieces
+                    parts = []
+                    for piece in split_text(text, args.split_long):
+                        parts += [np.asarray(model.inference(piece, lang, latent, embedding, **gen)["wav"]), gap]
+                    wav = np.concatenate(parts[:-1])
+                else:
+                    wav = model.inference(text, lang, latent, embedding, **gen)["wav"]
             except Exception as e:  # e.g. XTTS's own number expansion crashing on raw Hindi digits
                 failed += 1
                 print(f"{row['id']} FAILED: {type(e).__name__}: {e}", flush=True)

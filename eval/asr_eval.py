@@ -44,7 +44,8 @@ def main() -> None:
 
     deva = {}
     if args.deva and Path(args.deva).exists():
-        deva = {r["id"]: r["text_deva"] for r in csv.DictReader(open(args.deva, encoding="utf-8"), delimiter="\t")}
+        deva = {r["id"]: r["text_deva"] for r in csv.DictReader(open(args.deva, encoding="utf-8"), delimiter="\t")
+                if r.get("text_deva")}
 
     def scoring(row: dict) -> tuple[str, str, str]:
         """(whisper language key, reference text, metric name) for a row."""
