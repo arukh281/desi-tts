@@ -6,6 +6,9 @@ normaliser on, same eval settings throughout.
 Fine-tuned weights come from earlier runs attached as kernel outputs
 (KERNELS="desi-tts-e3-keep-extras desi-tts-e2b-keep").
 
+Kaggle's "T4 x2" gives two GPUs. The jobs are independent, so they run two at
+a time, one per GPU (nothing about any model or recipe changes).
+
 Usage (on Kaggle):  python eval/final_seeds.py --ref REF.wav ... [--seeds 1 2 3]
 Output: $OUT_DIR/final/<system>/seed<k>/ with manifest + all eval CSVs.
 """
@@ -25,10 +28,15 @@ def chosen_export(kernel: str, name: str) -> str:
     return str(IN / kernel / "out" / name / "select" / Path(sel["export"]).name)
 
 
-def evaluate(out: Path, *args: str) -> None:
-    env = dict(os.environ, OUT_DIR=str(out.parent))
-    print("\n$ evaluate", out.name, " ".join(args), flush=True)
-    subprocess.run([sys.executable, "eval/evaluate.py", "--name", out.name, *args], check=True, cwd=ROOT, env=env)
+def evaluate(out: Path, gpu: int, *args: str) -> None:
+    env = dict(os.environ, OUT_DIR=str(out.parent), CUDA_VISIBLE_DEVICES=str(gpu))
+    log = out.parent / f"{out.name}.log"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    print(f"[gpu {gpu}] start {out.parent.name}/{out.name}", flush=True)
+    with open(log, "w") as f:
+        subprocess.run([sys.executable, "eval/evaluate.py", "--name", out.name, *args],
+                       check=True, cwd=ROOT, env=env, stdout=f, stderr=subprocess.STDOUT)
+    print(f"[gpu {gpu}] done  {out.parent.name}/{out.name}", flush=True)
 
 
 def main() -> None:
@@ -47,16 +55,29 @@ def main() -> None:
     lines = (ROOT / "benchmark" / "benchmark.tsv").read_text(encoding="utf-8").splitlines()
     hing16.write_text("\n".join([lines[0]] + [l for l in lines[1:] if l.split("\t")[1] == "hinglish"]) + "\n",
                       encoding="utf-8")
+    jobs = []  # (output folder, extra args)
     for seed in args.seeds:
         for name, model in models.items():
             common = ["--model", model, "--ref", *args.ref, "--normalize", "on", "--seed", seed]
-            evaluate(final / name / f"seed{seed}", *common, *(["--stream"] if seed == args.seeds[0] else []))
+            jobs.append((final / name / f"seed{seed}", [*common, *(["--stream"] if seed == args.seeds[0] else [])]))
             if name in ("E1", "E3"):
-                evaluate(final / f"{name}_deva" / f"seed{seed}", *common, "--benchmark", str(hing16),
-                         "--hinglish-route", "deva")
+                jobs.append((final / f"{name}_deva" / f"seed{seed}",
+                             [*common, "--benchmark", str(hing16), "--hinglish-route", "deva"]))
                 for route in ("en", "deva"):
-                    evaluate(final / f"{name}_heldout_{route}" / f"seed{seed}", *common, "--benchmark", str(heldout),
-                             "--hinglish-route", route)
+                    jobs.append((final / f"{name}_heldout_{route}" / f"seed{seed}",
+                                 [*common, "--benchmark", str(heldout), "--hinglish-route", route]))
+
+    import torch
+    from concurrent.futures import ThreadPoolExecutor
+    from itertools import cycle
+
+    gpus = list(range(max(1, torch.cuda.device_count())))
+    print(f"{len(jobs)} jobs on GPUs {gpus}", flush=True)
+    slots = cycle(gpus)
+    with ThreadPoolExecutor(max_workers=len(gpus)) as pool:
+        futures = [pool.submit(evaluate, out, next(slots), *extra) for out, extra in jobs]
+        for f in futures:
+            f.result()
 
 
 if __name__ == "__main__":
