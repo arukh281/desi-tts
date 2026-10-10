@@ -59,12 +59,18 @@ def _translator():
     return ctranslate2.Translator(os.path.join(path, MODEL_DIR), device="cpu")
 
 
+# Words already transliterated. Decoding is the slow part (about 140 ms a sentence
+# on Kaggle's CPU), and a call script repeats the same words, so each word is
+# decoded once per process. Output is unchanged.
+_CACHE: dict[str, str] = {}
+
+
 def _xlit(words: list[str]) -> dict[str, str]:
-    todo = sorted({w for w in words if w not in OVERRIDES})
-    if not todo:
-        return {}
-    results = _translator().translate_batch([["__hi__"] + list(w) for w in todo], beam_size=4)
-    return {w: "".join(r.hypotheses[0]) for w, r in zip(todo, results)}
+    todo = sorted({w for w in words if w not in OVERRIDES and w not in _CACHE})
+    if todo:
+        results = _translator().translate_batch([["__hi__"] + list(w) for w in todo], beam_size=4)
+        _CACHE.update({w: "".join(r.hypotheses[0]) for w, r in zip(todo, results)})
+    return {w: _CACHE[w] for w in words if w in _CACHE}
 
 
 def to_devanagari(text: str) -> tuple[str, list[tuple[str, str]]]:
