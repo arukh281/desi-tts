@@ -7,6 +7,7 @@ transcript (lowercased; Devanagari compared as is). Acronym and time entries
 ("KYC = K Y C") are skipped.
 
 Usage:  python eval/names_seen.py NAME=RUN_DIR[,RUN_DIR...] ...   (several dirs, e.g. seeds, are pooled)
+        [--benchmark=FILE first, to use another text set such as benchmark/names_heldout.tsv]
 """
 import csv
 import re
@@ -18,9 +19,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:
-    bench = {r["id"]: r for r in csv.DictReader(open(ROOT / "benchmark" / "benchmark.tsv", encoding="utf-8"), delimiter="\t")}
+    argv = sys.argv[1:]
+    path = ROOT / "benchmark" / "benchmark.tsv"
+    if argv and argv[0].startswith("--benchmark="):
+        path, argv = Path(argv[0].split("=", 1)[1]), argv[1:]
+    bench = {r["id"]: r for r in csv.DictReader(open(path, encoding="utf-8"), delimiter="\t")}
     print("| run | type | seen missed | unseen missed |\n|---|---|---|---|")
-    for arg in sys.argv[1:]:
+    for arg in argv:
         name, dirs = arg.split("=", 1)
         miss, total = Counter(), Counter()
         rows = [r for d in dirs.split(",") for r in csv.DictReader(open(Path(d) / "asr_eval.csv", encoding="utf-8"))]
