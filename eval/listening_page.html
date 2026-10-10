@@ -44,6 +44,7 @@ legend { font-size: .92rem; padding: 0; margin-bottom: 6px; }
 .finish { display: grid; gap: 12px; }
 textarea { width: 100%; min-height: 9rem; font: .85rem/1.45 ui-monospace, Menlo, monospace; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); box-sizing: border-box; }
 button { font: 700 1rem var(--body); padding: 12px 16px; border: 0; border-radius: 10px; background: var(--accent); color: var(--accent-ink); cursor: pointer; }
+button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); justify-self: start; padding: 8px 14px; }
 button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .status { font-size: .9rem; color: var(--soft); min-height: 1.4em; }
 .status.warn { color: var(--warn); }
@@ -55,11 +56,13 @@ button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
     <h1>Which voice sounds right?</h1>
     <p>You'll hear 22 pairs of clips. Each pair is the same sentence said by two versions of a text-to-speech voice built from Aradhya's recordings. Use headphones if you can. About 10 minutes.</p>
     <p>For each pair, play A and B, then answer three quick questions. Go with your first impression. There are no right answers, and some pairs may sound very similar.</p>
+    <p><b>Sharing a phone?</b> Each person starts fresh: tap "Start fresh" (or change the name) so the last person's answers are cleared.</p>
   </header>
 
   <div class="name">
     <label class="small" for="listener">Your first name</label>
     <input id="listener" type="text" autocomplete="given-name" placeholder="e.g. Priya">
+    <button type="button" id="fresh" class="secondary">Start fresh</button>
   </div>
 
   <div id="pairs" class="pairs" style="display:grid;gap:18px"></div>
@@ -136,7 +139,26 @@ function update() {
   status.classList.toggle("warn", complete < PAIRS.length);
   document.getElementById("results").value = resultsText();
 }
+function clearAnswers() {
+  document.querySelectorAll('input[type="radio"]').forEach(r => { r.checked = false; });
+  PAIRS.forEach(p => { answers[p.id] = {}; document.getElementById(`done-${p.id}`).textContent = ""; });
+  document.querySelectorAll("audio").forEach(a => { a.pause(); a.currentTime = 0; });
+  update();
+}
+let lastName = "";
+document.getElementById("listener").addEventListener("change", e => {
+  const name = e.target.value.trim();
+  if (lastName && name !== lastName) clearAnswers();  // a new person: drop the previous answers
+  lastName = name;
+  update();
+});
 document.getElementById("listener").addEventListener("input", update);
+document.getElementById("fresh").addEventListener("click", () => {
+  document.getElementById("listener").value = "";
+  lastName = "";
+  clearAnswers();
+  window.scrollTo({ top: 0 });
+});
 document.getElementById("copy").addEventListener("click", async () => {
   const box = document.getElementById("results");
   box.value = resultsText();
