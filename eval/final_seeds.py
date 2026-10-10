@@ -9,6 +9,10 @@ Fine-tuned weights come from earlier runs attached as kernel outputs
 Kaggle's "T4 x2" gives two GPUs. The jobs are independent, so they run two at
 a time, one per GPU (nothing about any model or recipe changes).
 
+Also a "real voice" row: my actual val recordings scored with the same
+Whisper and speaker-similarity settings, i.e. what the metrics give real
+speech. Needs DATASETS to include desi-tts-own-voice.
+
 Usage (on Kaggle):  python eval/final_seeds.py --ref REF.wav ... [--seeds 1 2 3]
 Output: $OUT_DIR/final/<system>/seed<k>/ with manifest + all eval CSVs.
 """
@@ -39,12 +43,46 @@ def evaluate(out: Path, gpu: int, *args: str) -> None:
     print(f"[gpu {gpu}] done  {out.parent.name}/{out.name}", flush=True)
 
 
+def real_voice(final: Path, ref: list[str]) -> None:
+    """My real val clips laid out like a synth folder, then the same evals."""
+    import csv
+
+    sys.path.insert(0, str(ROOT / "recording"))
+    from order import language_group
+
+    data = IN / "desi-tts-own-voice"
+    if not data.exists():
+        print("real voice: dataset not attached, skipped", flush=True)
+        return
+    out = final / "real_voice" / "seed1"
+    out.mkdir(parents=True, exist_ok=True)
+    rows = []
+    for lang in ("en", "hi"):
+        meta = data / f"metadata_{lang}_val.csv"
+        for r in csv.DictReader(open(meta, encoding="utf-8"), delimiter="|"):
+            clip = Path(r["audio_file"]).stem
+            group = language_group({"lang": lang, "text": r["text"]})
+            link = out / f"{clip}.wav"
+            if not link.exists():
+                link.symlink_to(data / r["audio_file"])
+            rows.append({"id": clip, "lang": group, "xtts_lang": lang, "text_in": r["text"], "text_used": r["text"]})
+    with open(out / "manifest.csv", "w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        w.writeheader()
+        w.writerows(rows)
+    env = dict(os.environ, CUDA_VISIBLE_DEVICES="0")
+    for script, extra in (("eval/asr_eval.py", ["--deva", ""]), ("eval/speaker_sim.py", ["--ref", *ref])):
+        subprocess.run([sys.executable, script, "--synth-dir", str(out), *extra], check=True, cwd=ROOT, env=env)
+    print(f"real voice: {len(rows)} val clips scored", flush=True)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--ref", nargs="+", required=True)
     ap.add_argument("--seeds", nargs="+", default=["1", "2", "3"])
     args = ap.parse_args()
 
+    real_voice(Path(os.environ.get("OUT_DIR", "outputs")) / "final", args.ref)
     models = {"E1": "pretrained", "E2b": chosen_export("desi-tts-e2b-keep", "e2b"),
               "E3": chosen_export("desi-tts-e3-keep-extras", "e3")}
     print("models:", models, flush=True)

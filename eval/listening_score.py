@@ -85,7 +85,13 @@ def main() -> None:
     owner = {n: a for n, a in listeners.items() if n.lower() == args.owner.lower()}
     others = {n: a for n, a in listeners.items() if n.lower() != args.owner.lower()}
     report("Owner (not blind to his own voice)", owner, key)
-    report("Other listeners", others, key)
+    for name, answers in others.items():
+        report(f"Listener {name}", {name: answers}, key)
+    if len(others) > 1:
+        report("Other listeners pooled", others, key)
+    dupes = [(a, b) for i, a in enumerate(listeners) for b in list(listeners)[i + 1:] if listeners[a] == listeners[b]]
+    for a, b in dupes:
+        print(f"\nWARNING: {a} and {b} gave identical answers to every pair; probably the same submission twice")
 
 
 if __name__ == "__main__":
