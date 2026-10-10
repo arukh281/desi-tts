@@ -6,7 +6,7 @@ Every number below comes from a file in [`results/`](../results); the file is na
 
 ## 1. Summary
 
-I fine-tuned the GPT part of XTTS-v2 on 24 minutes of my own speech and added two text front-ends: a normaliser for numbers, currency, dates and acronyms, and a route that sends Hinglish to the model in Devanagari. On an 88-sentence benchmark, averaged over 3 seeds, the final system has a character error rate (CER) of 0.061 against 0.125 for the pretrained model with the same normaliser (difference −0.064, 95% interval [−0.110, −0.025]). Almost all of that gain is Hinglish (0.400 → 0.098). English and Hindi CER don't change beyond noise. Speaker similarity to my voice rises from 0.50 to 0.73 in English, against 0.76 for my real recordings. In one joint listening session, three listeners picked the fine-tuned model as more like me in 15 of 16 pairs. Names are the main weakness left, and fine-tuning made them slightly worse.
+I fine-tuned the GPT part of XTTS-v2 on 24 minutes of my own speech and added two text front-ends: a normaliser for numbers, currency, dates and acronyms, and a route that sends Hinglish to the model in Devanagari. On an 88-sentence benchmark, averaged over 3 seeds, the final system has a character error rate (CER) of 0.061 against 0.125 for the pretrained model with the same normaliser (difference −0.064, 95% interval [−0.110, −0.025]). Almost all of that gain is Hinglish (0.400 → 0.098). English and Hindi CER don't change beyond noise. Speaker similarity to my voice rises from 0.50 to 0.73 in English, against 0.76 for my real recordings. In one joint listening session, three listeners picked the fine-tuned model as more like me in 15 of 16 pairs. Names are the main weakness left: on the 8 English name rows, fine-tuning made CER worse (0.030 → 0.106, +0.076 [+0.005, +0.193]).
 
 ## 2. Data
 
@@ -27,7 +27,7 @@ I fine-tuned the GPT part of XTTS-v2 on 24 minutes of my own speech and added tw
 
 ## 3. Model and text
 
-**Model.** XTTS-v2 (coqui-tts 0.27.5). It already speaks English and Hindi, clones a voice from short reference audio and can stream. I fine-tune only its GPT part: 441 M of 518 M parameters ([training_summary](../results/runs/E3_run2/train/train_summary.json)). The GPT decides which sounds to make, so it carries accent and pronunciation. The audio codec and the HiFi-GAN decoder stay frozen, which keeps training within a 16 GB T4. XTTS-v2's licence is non-commercial, which matters for production (section 9).
+**Model.** XTTS-v2 (coqui-tts 0.27.5). It already speaks English and Hindi, clones a voice from short reference audio and can stream. I fine-tune only its GPT part: 441 M of 518 M parameters ([training_summary](../results/runs/E3_run2/train/train_summary.json)). The GPT decides which sounds to make, so it carries accent and pronunciation. The audio codec and the HiFi-GAN decoder stay frozen, which keeps training within a 16 GB T4. XTTS-v2's licence is non-commercial, which matters for production (section 8).
 
 **Text representation.** XTTS reads characters, not phonemes. That turned out to help: wrong readings can often be fixed in the text before the model sees it.
 - **Normaliser** (`text/normalize.py`): ₹, numbers, lakh/crore, dates, times and acronyms become the words a person would say ("₹12,750" → "twelve thousand seven hundred and fifty rupees", "KYC" → "K Y C"). It reproduces all 64 expected spoken forms in the benchmark. Without it, pretrained XTTS crashes on 8 of 12 Hindi rows, because its own digit expander fails on Hindi.
@@ -35,9 +35,9 @@ I fine-tuned the GPT part of XTTS-v2 on 24 minutes of my own speech and added tw
 
 ## 4. Training
 
-Final run E3: sessions 1+2 (316 train / 17 val clips), learning rate 5e-6 (the coqui recipe default, low so the model keeps its English and Hindi), batch 2 with gradient accumulation 8 (16 clips per update), a 2000-step target (2054 steps run, 13 epochs), fp32, seed 1234. Weights are saved at 500, 1000, 1500 and 2000 steps. The checkpoint is chosen on the 17 val clips only: lowest val loss, among checkpoints whose val CER is within 0.05 of the best and that have no more than 2 extra duration flags. That picked **step 1500**. Step 2000 had the lowest loss but a val CER of 0.135, a sign of babbling ([selection](../results/runs/E3_run2/select/selection.csv)).
+Final run E3: sessions 1+2 (316 train / 17 val clips), learning rate 5e-6 (the coqui recipe default, low so the model keeps its English and Hindi), batch 2 with gradient accumulation 8 (16 clips per update), a 2000-step target (2054 steps run, 13 epochs), fp32. A step here is one micro-batch of 2 clips, so 2054 steps are about 257 optimizer updates, seed 1234. Weights are saved at 500, 1000, 1500 and 2000 steps. The checkpoint is chosen on the 17 val clips only: lowest val loss, among checkpoints whose val CER is within 0.05 of the best and that have no more than 2 extra duration flags. That picked **step 1500**. Step 2000 had the lowest loss but a val CER of 0.135, a sign of babbling ([selection](../results/runs/E3_run2/select/selection.csv)).
 
-**Time.** 2054 steps (median 0.44 s per step), **16.4 minutes** of summed step time on one T4, peak 9.4 GB VRAM ([training](../results/training.md)). The whole Kaggle job, including setup, checkpoint selection and benchmark synthesis, took about 50 minutes ([run_info](../results/runs/E3_run2/run_info.json)). I trained E3 twice with the same seed; run 2 gave exactly the same selection table as run 1, so the pick is reproducible ([run 1](../results/runs/E3_run1/select/selection.csv), [run 2](../results/runs/E3_run2/select/selection.csv)).
+**Time.** 2054 steps (median 0.44 s per step), **16.4 minutes** of summed step time on one T4, peak 9.4 GB VRAM ([training](../results/training.md)). The whole Kaggle job took about 50 minutes ([run_info](../results/runs/E3_run2/run_info.json)). I trained E3 twice with the same seed; run 2 gave exactly the same selection table as run 1, so the pick is reproducible ([run 1](../results/runs/E3_run1/select/selection.csv), [run 2](../results/runs/E3_run2/select/selection.csv)).
 
 ## 5. Benchmark and experiments
 
@@ -51,15 +51,15 @@ Final run E3: sessions 1+2 (316 train / 17 val clips), learning rate 5e-6 (the c
 
 **Experiments** (details in [EXPERIMENTS.md](EXPERIMENTS.md)):
 - **E0** is the pretrained model on raw text; it crashes on Hindi digits. **E1** is the pretrained model with the normaliser, and is the baseline.
-- **E2** fine-tuned on session 1 and picked the checkpoint by val CER. It **failed**: it chose step 250, which sounded robotic and not like me. CER on 8 val clips was too noisy to choose by, so I switched to the val-loss rule above.
-- **E2b** repeats E3's recipe on session 1 only, to see what the extra 8 minutes bought. I trained it twice. Both runs picked step 1000, after which val loss rises: 16 minutes overfits sooner. Run 2 didn't reproduce run 1 bit for bit (val loss at the picked step within 0.002, val CER moved), unlike E3. Run 1, single seed: CER en 0.028, hi 0.062, Hinglish 0.263. Run 2, 3 seeds, against E3: E3 − E2b = +0.002 [−0.016, +0.022] overall, +0.008 [−0.015, +0.034] English, +0.035 [−0.003, +0.094] Hindi, and −0.045 [−0.076, −0.017] Hinglish ([bootstrap_E2b_vs_E3](../results/bootstrap_E2b_vs_E3.txt)). So the extra 8 minutes measurably helped only Hinglish, and slightly the voice (English similarity 0.721 → 0.730). It also shows E2's failure came from the checkpoint pick, not from having less data.
+- **E2** fine-tuned on session 1 and picked the checkpoint by val CER. It **failed**: it chose step 250, which sounded robotic and not like me, even though its English speaker similarity was already high (0.718). So ECAPA similarity tracks who is speaking, not how natural it sounds. CER on 8 val clips was too noisy to choose by, so I switched to the val-loss rule above.
+- **E2b** repeats E3's recipe on session 1 only, to see what the extra 8 minutes bought. I trained it twice. Both runs picked step 1000, after which val loss rises: 16 minutes overfits sooner. Run 2 didn't reproduce run 1 bit for bit (val loss at the picked step within 0.002, val CER moved), unlike E3. Run 1, single seed: CER en 0.028, hi 0.062, Hinglish 0.263. Run 2, 3 seeds, against E3: E3 − E2b = +0.002 [−0.016, +0.022] overall, +0.008 [−0.015, +0.034] English, +0.035 [−0.003, +0.094] Hindi, and −0.045 [−0.076, −0.017] Hinglish ([bootstrap_E2b_vs_E3](../results/bootstrap_E2b_vs_E3.txt)). So the extra 8 minutes measurably helped only Hinglish, and slightly the voice (English similarity 0.721 → 0.730).
 - **E4** trains Hinglish as Devanagari, **E5** sweeps sampling settings and **E6** splits long sentences. None of them beat noise, so none were adopted.
 
 ## 6. Results
 
 3 seeds, normaliser on, my 3 reference clips ([summary](../results/summary.md), bootstraps in [results/](../results)).
 
-| | E1 pretrained | E3 fine-tuned | **Final** (E3 + Hinglish route) | my real voice (val clips) |
+| | E1 pretrained | E3 fine-tuned | **Final** (E3 + Hinglish route) | my real voice (val clips, reference point) |
 |---|---|---|---|---|
 | CER, all 88 | 0.125 | 0.084 | **0.061** | – |
 | CER, English (60) | 0.037 | 0.043 | 0.043 | 0.100 (8 clips) |
@@ -76,9 +76,9 @@ Final run E3: sessions 1+2 (316 train / 17 val clips), learning rate 5e-6 (the c
 | Hindi | −0.096 | [−0.331, +0.054] | no (12 rows, wide) |
 | Hinglish | −0.303 | [−0.392, −0.215] | yes |
 
-Fine-tuning alone (E3 − E1) is −0.041 [−0.083, −0.009] overall and −0.178 [−0.247, −0.118] on Hinglish. By category, E1 → Final: questions 0.291 → 0.026, currency 0.103 → 0.020, dates and times 0.189 → 0.093, numbers 0.169 → 0.105, but names only 0.107 → 0.095, and places 0.073 → 0.091 ([bootstrap_E1_vs_Final](../results/bootstrap_E1_vs_Final.txt)).
+Fine-tuning alone (E3 − E1) is −0.041 [−0.083, −0.009] overall and −0.178 [−0.247, −0.118] on Hinglish. By category, E1 → Final: questions 0.291 → 0.026, currency 0.103 → 0.020, dates and times 0.189 → 0.093, numbers 0.169 → 0.105, places 0.073 → 0.091, and names 0.107 → 0.095. That small names gain comes only from the 3 Hinglish name rows, which the Devanagari route fixes (0.355 → 0.084); the 8 English name rows get worse, 0.030 → 0.106, +0.076 [+0.005, +0.193], a real but small-sample change ([bootstrap_names](../results/bootstrap_names_E1_vs_Final.txt)) ([bootstrap_E1_vs_Final](../results/bootstrap_E1_vs_Final.txt)).
 
-How to read the real-voice row: it is my own val recordings scored with the same Whisper and ECAPA settings. It is a ceiling for similarity and a floor for CER, but it uses different sentences and only 17 clips. English synthetic speech (0.730) is close to my real voice (0.763). Hindi synthetic is *above* real (0.706 vs 0.615), probably because synthesis is conditioned on the reference clip, so it can sound more like that clip than my other takes do. Real English CER (0.100) being worse than synthetic is a small-sample oddity: 8 clips with names and numbers.
+How to read the real-voice row: it is my own val recordings scored with the same Whisper and ECAPA settings. It is a reference point, not a ceiling: it uses different sentences and only 17 clips, and Hindi synthetic speech scores above it. English synthetic speech (0.730) is close to my real voice (0.763). Hindi synthetic is *above* real (0.706 vs 0.615), probably because synthesis is conditioned on the reference clip, so it can sound more like that clip than my other takes do. Real English CER (0.100) is a small-sample oddity (8 clips).
 
 **Listening test.** One joint session: three people listened together and agreed each answer, so it is one consensus judgement, not three independent ones. The page was blind and in random order: 22 A/B pairs, 16 E1 vs E3, 4 Hinglish Roman vs Devanagari on E3, and 2 repeats with A and B swapped. The E3 audio was from E3 run 1, whose training matches run 2 exactly ([listening](../results/listening_joint_session1.md)).
 
@@ -105,7 +105,9 @@ The voice change is clear. Both systems still get words wrong often, which match
 
 The route gives the intelligibility; fine-tuning gives the voice (with the route fixed, Hinglish similarity 0.676 → 0.738). On E3, the route is worth −0.124 [−0.177, −0.068] on the benchmark and −0.086 [−0.146, −0.034] on the held-out sentences. The held-out check matters because I chose the lexicon's function words while looking at the 16 benchmark rows. Training on Devanagari Hinglish instead (E4) added nothing. What IndicXlit still gets wrong is mostly loanwords, for example "Pune" → प्यून.
 
-**Names (not fixed, main weakness).** By word type, E3 misses 0.45 of name words, against 0.02 of ordinary English words ([error_analysis](../results/error_analysis_E3_run1.md)). Examples: "Anjali Reddy" → "and daddy ready", "Guwahati" → "Buahtai", and one babble where the model added a sentence after "Venkatesh Iyer". Pooled over 3 seeds, E3 misses 42% of seen name words and 41% of unseen ones; the pretrained model misses 25% and 30% ([names_seen](../results/names_seen.md)). So having a name in training didn't help, and fine-tuning on 24 minutes made names a little worse. Part of this is Whisper, which also struggles with Indian names, so the true rate is lower than measured. But the listeners marked name errors too. The numbers and dates the listeners marked wrong had correct normaliser text, so those come from the model's delivery, for example "E M I" heard as "AMI".
+**Names (not fixed, main weakness).** By word type, E3 misses 0.45 of name words, against 0.02 of ordinary English words ([error_analysis](../results/error_analysis_E3_run1.md)). Examples: "Anjali Reddy" → "and daddy ready", "Guwahati" → "Buahtai", and one babble where the model added a sentence after "Venkatesh Iyer". Pooled over 3 seeds, E3 misses 42% of seen name words and 41% of unseen ones; the pretrained model misses 25% and 30% ([names_seen](../results/names_seen.md)). So having a name in training didn't help. On English name rows, fine-tuning on 24 minutes made CER worse: 0.030 → 0.106, +0.076 [+0.005, +0.193] (8 rows, 3 seeds; the interval only just excludes 0, and one row is the babble). Part of the measured error is Whisper: on my own real takes of training prompts with names, Whisper misses 13 of 48 name words (0.27) ([names_real](../results/names_real.txt)). That is about the pretrained model's synthetic rate (0.25-0.30), but well below E3's (0.41-0.42), so E3's extra name errors are the model's, not the ASR's. The listeners marked name errors too. The numbers and dates the listeners marked wrong had correct normaliser text, so those come from the model's delivery, for example "E M I" heard as "AMI".
+
+**Question intonation.** On the 10 yes/no questions, I measured the pitch slope over the last 300 ms of each clip (pyin, one take each). Neither system reliably rises at the end: E1 rises on 5 of 10 (median −1.7 semitones/s), Final on 4 of 9 (median −0.0; one clip had no voiced ending) ([question_pitch](../results/question_pitch.md)). Fine-tuning didn't fix question intonation, and my recordings may not have rising questions either; I haven't measured that.
 
 ## 8. Production
 
@@ -126,20 +128,18 @@ Measured on a T4 for the final pipeline over 176 sentences (the benchmark twice;
 
 **Streaming and bottlenecks.** XTTS streams audio from its GPT in chunks, so first audio arrives after about 0.43 s while the rest is generated. The GPT's token-by-token decoding is the bottleneck: one stream uses about half a T4 in real time (RTF 0.51). Memory isn't the limit, at 2.5 GB per model copy.
 
-**Hundreds of concurrent calls.** At RTF 0.5, one unbatched stream per GPU keeps up with about two live calls, so a hundred calls would need about 50 T4s. That is too expensive, so the real plan is:
+**Hundreds of concurrent calls.** The agent only talks for part of each call. Assume it speaks 40% of the time (an assumption, not measured). One unbatched stream at RTF 0.51 makes 1 / 0.51 ≈ 2.0 seconds of audio per second, so one T4 covers about 2.0 / 0.4 ≈ 5 calls if their speaking turns are spread out, and 100 calls need about 100 / 5 = 20 T4s. Turns collide, so p95 first-audio time would get worse before that point. That is still too expensive, so the real plan is:
 - batch many calls' GPT decoding on one GPU (continuous batching), which is where most of the gain is;
 - cache each voice's conditioning once;
+- try fp16 inference, which T4s run much faster than fp32 (untested here; quality and stability need checking);
 - run the text front-end on CPU workers, with the word cache;
 - pre-render fixed phrases such as greetings and hold messages;
 - guard against babbling with a token limit and a duration check;
 - scale on p95 first-audio time.
 
-I haven't measured batched throughput, so I can't give a calls-per-GPU number yet. XTTS-v2's non-commercial licence would also have to be dealt with before a real deployment.
+I haven't measured batched throughput, so I can't give a measured calls-per-GPU number yet. **Licence:** XTTS-v2's weights are non-commercial (Coqui Public Model License), and Coqui shut down in January 2024 ([coqui-ai/TTS discussion #4145](https://github.com/coqui-ai/TTS/discussions/4145)), so there is no one to buy a commercial licence from. A real deployment needs a different base model; the pipeline (data, normaliser, Hinglish route, evaluation) carries over.
 
 ## 9. Limits and next steps
 
-- **Small data and small tests.** 24 minutes of one speaker. Hindi has 12 benchmark rows and its interval is wide; Hinglish CER is a rough Devanagari score. The listening test is one consensus session of three people, not independent raters.
-- **Metric limits.** Whisper misreads Indian names and spells Hindi loanwords inconsistently, so some measured errors are the ASR's.
-- **Names.** The next step is targeted recordings of names and places plus a respelling list, checked on unseen names.
-- **More data.** A third session, mostly Hindi and names, and independent listeners, each rating separately.
-- **Production.** Measure batched throughput and IndicXlit on GPU; consider a base model with a commercial licence.
+- **Limits.** 24 minutes of one speaker; 12 Hindi rows (wide interval); Hinglish CER is a rough score; Whisper misreads names and spells Hindi loanwords inconsistently; one consensus listening session.
+- **Next.** Targeted recordings of names and places plus a respelling list, checked on unseen names; a third session, mostly Hindi; independent listeners rating separately; a commercially licensed base model; measured batched throughput, fp16 and IndicXlit on GPU.
