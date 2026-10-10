@@ -31,7 +31,7 @@ I fine-tuned the GPT part of XTTS-v2 on 24 minutes of my own speech and added tw
 
 **Text representation.** XTTS reads characters, not phonemes. That turned out to help: wrong readings can often be fixed in the text before the model sees it.
 - **Normaliser** (`text/normalize.py`): ₹, numbers, lakh/crore, dates, times and acronyms become the words a person would say ("₹12,750" → "twelve thousand seven hundred and fifty rupees", "KYC" → "K Y C"). It reproduces all 64 expected spoken forms in the benchmark. Without it, pretrained XTTS crashes on 8 of 12 Hindi rows, because its own digit expander fails on Hindi.
-- **Hinglish route** (`text/translit.py`): Roman Hinglish is turned into Devanagari with IndicXlit (AI4Bharat, MIT licence) plus a lexicon of about 90 number and everyday words, then sent to XTTS as Hindi. Section 7 covers why.
+- **Hinglish route** (`text/translit.py`): Roman Hinglish is turned into Devanagari with IndicXlit (AI4Bharat, MIT licence) plus a lexicon of 178 number and everyday words, then sent to XTTS as Hindi. Section 7 covers why.
 
 ## 4. Training
 
