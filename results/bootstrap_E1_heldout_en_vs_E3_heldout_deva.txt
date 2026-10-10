@@ -1,13 +1,13 @@
 
-### CER: E3_deva vs E1_roman (seeds: 3 vs 3; 10 sentences)
+### CER: E3_heldout_deva vs E1_heldout_en (seeds: 3 vs 3; 10 sentences)
 
-| subset | n | E1_roman | E3_deva | E3_deva - E1_roman | 95% interval | real? |
+| subset | n | E1_heldout_en | E3_heldout_deva | E3_heldout_deva - E1_heldout_en | 95% interval | real? |
 |---|---|---|---|---|---|---|
 | all | 10 | 0.348 | 0.119 | -0.229 | [-0.294, -0.171] | yes |
 | lang=hinglish | 10 | 0.348 | 0.119 | -0.229 | [-0.294, -0.171] | yes |
 
 ### CER per category: mean over seeds (min-max of per-seed means)
 
-| category | n | E1_roman | E3_deva |
+| category | n | E1_heldout_en | E3_heldout_deva |
 |---|---|---|---|
 | fixture | 10 | 0.348 (0.331-0.357) | 0.119 (0.107-0.131) |
