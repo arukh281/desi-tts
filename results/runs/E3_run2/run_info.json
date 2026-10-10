@@ -1,0 +1,14 @@
+{
+  "branch": "dev",
+  "sha": "b22c5f3154ab1fba49ea94014f759d7cbd142539",
+  "script": "eval/block10_e3.py",
+  "args": "--data /tmp/in/desi-tts-own-voice --ref /tmp/in/desi-tts-reference/ref_en.wav /tmp/in/desi-tts-reference/ref_hinglish.wav /tmp/in/desi-tts-reference/ref_hi.wav -- --lr 5e-6 --batch 2 --grad-accum 8 --max-steps 2000 --save-step 2000 --keep 1 --eval-step 200 --seed 1234",
+  "started": "2026-10-10 16:51:34",
+  "gpu": "Tesla T4, 15360 MiB\nTesla T4, 15360 MiB",
+  "sha_checked_out": "b22c5f3154ab1fba49ea94014f759d7cbd142539",
+  "datasets": "desi-tts-reference desi-tts-own-voice",
+  "kernel_inputs": "",
+  "exit_code": 0,
+  "reason": "",
+  "finished": "2026-10-10 17:42:05"
+}

@@ -56,6 +56,8 @@ def main() -> None:
                      f"{sum(c['split'] == 'train' for c in g)} | {sum(c['split'] == 'val' for c in g)} |")
     total = sum(float(c["seconds"]) for c in used) / 3600
     lines += [f"| **total** | | {len(used)} | {total:.2f} | | |", "",
+              "Minutes by session: " + ", ".join(f"{k} {sum(float(c['seconds']) for c in used if c['session'] == k) / 60:.1f}"
+                                                  for k in sorted({c['session'] for c in used})), "",
               "## Quality", "",
               f"- Duration (s): {spread([float(c['seconds']) for c in used])}",
               f"- SNR (dB): {spread([float(c['snr_db']) for c in used])}",

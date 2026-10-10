@@ -1,10 +1,10 @@
 {
   "machine": "Darwin arm64",
-  "load_ms": 487.7,
+  "load_ms": 498.3,
   "cold": {
     "n": 16,
-    "median_ms": 20.22,
-    "max_ms": 30.4
+    "median_ms": 19.62,
+    "max_ms": 31.46
   },
   "repeat": {
     "n": 16,
@@ -13,8 +13,21 @@
   },
   "new_text": {
     "n": 10,
-    "median_ms": 21.7,
-    "max_ms": 29.93
+    "median_ms": 21.31,
+    "max_ms": 30.62
   },
-  "same_output_on_repeat": true
+  "same_output_on_repeat": true,
+  "greedy": {
+    "beam4": {
+      "n": 26,
+      "median_ms": 20.67,
+      "max_ms": 34.8
+    },
+    "beam1": {
+      "n": 26,
+      "median_ms": 14.51,
+      "max_ms": 23.17
+    },
+    "outputs_changed": 5
+  }
 }

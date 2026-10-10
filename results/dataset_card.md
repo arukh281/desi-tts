@@ -21,6 +21,8 @@
 | hi | hi | 97 | 0.11 | 92 | 5 |
 | **total** | | 333 | 0.40 | | |
 
+Minutes by session: session_1 16.4, session_2 7.8
+
 ## Quality
 
 - Duration (s): median 4.2, min 1.6, max 8.4
