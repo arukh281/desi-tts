@@ -26,6 +26,7 @@ SCRIPT = "__SCRIPT__"
 ARGS = "__ARGS__"
 DATASETS = "__DATASETS__"
 KERNELS = "__KERNELS__"
+GPU = "__GPU__"  # T4 normally; P100 allowed for training/accuracy runs only
 
 REPO_URL = "https://github.com/arukh281/desi-tts.git"
 REPO = "/kaggle/working/desi-tts"
@@ -66,8 +67,9 @@ gpu = subprocess.run("nvidia-smi --query-gpu=name,memory.total --format=csv,nohe
                      shell=True, capture_output=True, text=True).stdout.strip()
 info["gpu"] = gpu
 print(f"GPU: {gpu or 'none'}")
-if "T4" not in gpu:
-    finish(2, f"expected a T4, got: {gpu or 'no GPU'}")
+info["gpu_requested"] = GPU
+if GPU not in gpu:
+    finish(2, f"expected a {GPU}, got: {gpu or 'no GPU'}")
 
 if run(f"git clone -q --branch {BRANCH} {REPO_URL} {REPO}") != 0:
     finish(3, "git clone failed")

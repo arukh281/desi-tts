@@ -10,6 +10,7 @@
 #   SHA      commit to run (default: HEAD). Must already be pushed.
 #   KAGGLE   path to the kaggle CLI (default: kaggle on PATH)
 #   TIMEOUT  max run time in seconds (default: 2400 = 40 min)
+#   GPU      T4 (default) or P100. P100 only for training/accuracy runs, never for speed numbers.
 #   DATASETS space-separated private Kaggle datasets to attach, e.g. "desi-tts-own-voice"
 #            (scripts see each one at /tmp/in/<name>/)
 #   FETCH    regex of output files to download (default: everything). Use it to skip
@@ -22,7 +23,7 @@
 set -euo pipefail
 
 if [[ $# -lt 2 || "$1" == "-h" || "$1" == "--help" ]]; then
-  sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'
   exit 0
 fi
 
@@ -34,6 +35,8 @@ KAGGLE="${KAGGLE:-kaggle}"
 BRANCH="${BRANCH:-$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)}"
 SHA="${SHA:-$(git -C "$ROOT" rev-parse HEAD)}"
 TIMEOUT="${TIMEOUT:-2400}"
+GPU="${GPU:-T4}"
+case "$GPU" in T4) ACCEL=NvidiaTeslaT4 ;; P100) ACCEL=NvidiaTeslaP100 ;; *) echo "GPU must be T4 or P100" >&2; exit 1 ;; esac
 DATASETS="${DATASETS:-}"
 KERNELS="${KERNELS:-}"
 
@@ -51,12 +54,12 @@ WORK="$(mktemp -d)"
 OUT="$ROOT/outputs/kaggle/$RUN_NAME"
 
 # Fill in the template. ARGS goes through Python so quotes can't break the file.
-python3 - "$ROOT/kaggle/kernel_template.py" "$WORK/kernel.py" "$BRANCH" "$SHA" "$SCRIPT" "$ARGS" "$DATASETS" "$KERNELS" <<'EOF'
+python3 - "$ROOT/kaggle/kernel_template.py" "$WORK/kernel.py" "$BRANCH" "$SHA" "$SCRIPT" "$ARGS" "$DATASETS" "$KERNELS" "$GPU" <<'EOF'
 import sys
-src, dst, branch, sha, script, args, datasets, kernels = sys.argv[1:]
+src, dst, branch, sha, script, args, datasets, kernels, gpu = sys.argv[1:]
 text = open(src).read()
 for key, value in {"__BRANCH__": branch, "__SHA__": sha, "__SCRIPT__": script, "__ARGS__": args,
-                   "__DATASETS__": datasets, "__KERNELS__": kernels}.items():
+                   "__DATASETS__": datasets, "__KERNELS__": kernels, "__GPU__": gpu}.items():
     text = text.replace(f'"{key}"', repr(value))
 open(dst, "w").write(text)
 EOF
@@ -78,7 +81,7 @@ cat > "$WORK/kernel-metadata.json" <<EOF
 EOF
 
 echo "Pushing $SLUG: $SCRIPT $ARGS @ ${SHA:0:7} ($BRANCH)"
-"$KAGGLE" kernels push -p "$WORK" --accelerator NvidiaTeslaT4 -t "$TIMEOUT"
+"$KAGGLE" kernels push -p "$WORK" --accelerator "$ACCEL" -t "$TIMEOUT"
 
 # Poll until the run finishes.
 START=$(date +%s)

@@ -83,8 +83,11 @@ def main() -> None:
     args = ap.parse_args()
 
     real_voice(Path(os.environ.get("OUT_DIR", "outputs")) / "final", args.ref)
-    models = {"E1": "pretrained", "E2b": chosen_export("desi-tts-e2b-keep", "e2b"),
-              "E3": chosen_export("desi-tts-e3-keep-extras", "e3")}
+    models = {"E1": "pretrained", "E3": chosen_export("desi-tts-e3-keep-extras", "e3")}
+    if (IN / "desi-tts-e2b-keep").exists():  # E2b may run last (or not at all if GPU time runs out)
+        models["E2b"] = chosen_export("desi-tts-e2b-keep", "e2b")
+    else:
+        print("E2b weights not attached: E2b stays at its single-seed run", flush=True)
     print("models:", models, flush=True)
     final = Path(os.environ.get("OUT_DIR", "outputs")) / "final"
     heldout = ROOT / "benchmark" / "hinglish_heldout.tsv"
