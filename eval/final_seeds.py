@@ -80,14 +80,20 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--ref", nargs="+", required=True)
     ap.add_argument("--seeds", nargs="+", default=["1", "2", "3"])
+    ap.add_argument("--only", nargs="+", help="run just these systems (e.g. E2b) and skip the real-voice row")
     args = ap.parse_args()
 
-    real_voice(Path(os.environ.get("OUT_DIR", "outputs")) / "final", args.ref)
-    models = {"E1": "pretrained", "E3": chosen_export("desi-tts-e3-keep-extras", "e3")}
+    if not args.only:
+        real_voice(Path(os.environ.get("OUT_DIR", "outputs")) / "final", args.ref)
+    models = {"E1": "pretrained"}
+    if (IN / "desi-tts-e3-keep-extras").exists():
+        models["E3"] = chosen_export("desi-tts-e3-keep-extras", "e3")
     if (IN / "desi-tts-e2b-keep").exists():  # E2b may run last (or not at all if GPU time runs out)
         models["E2b"] = chosen_export("desi-tts-e2b-keep", "e2b")
     else:
         print("E2b weights not attached: E2b stays at its single-seed run", flush=True)
+    if args.only:
+        models = {k: v for k, v in models.items() if k in args.only}
     print("models:", models, flush=True)
     final = Path(os.environ.get("OUT_DIR", "outputs")) / "final"
     heldout = ROOT / "benchmark" / "hinglish_heldout.tsv"
