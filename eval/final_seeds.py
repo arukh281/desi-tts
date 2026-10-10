@@ -67,16 +67,25 @@ def main() -> None:
                     jobs.append((final / f"{name}_heldout_{route}" / f"seed{seed}",
                                  [*common, "--benchmark", str(heldout), "--hinglish-route", route]))
 
-    import torch
+    import queue
     from concurrent.futures import ThreadPoolExecutor
-    from itertools import cycle
 
-    gpus = list(range(max(1, torch.cuda.device_count())))
-    print(f"{len(jobs)} jobs on GPUs {gpus}", flush=True)
-    slots = cycle(gpus)
-    with ThreadPoolExecutor(max_workers=len(gpus)) as pool:
-        futures = [pool.submit(evaluate, out, next(slots), *extra) for out, extra in jobs]
-        for f in futures:
+    import torch
+
+    free = queue.Queue()
+    for gpu in range(max(1, torch.cuda.device_count())):
+        free.put(gpu)
+    print(f"{len(jobs)} jobs on {free.qsize()} GPU(s)", flush=True)
+
+    def run_on_free_gpu(out: Path, extra: list[str]) -> None:
+        gpu = free.get()  # one job per GPU at a time
+        try:
+            evaluate(out, gpu, *extra)
+        finally:
+            free.put(gpu)
+
+    with ThreadPoolExecutor(max_workers=free.qsize()) as pool:
+        for f in [pool.submit(run_on_free_gpu, out, extra) for out, extra in jobs]:
             f.result()
 
 
