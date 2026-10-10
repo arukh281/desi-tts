@@ -65,3 +65,5 @@ Final comparison with 3 seeds and bootstrap intervals. Final (E3 + Hinglish rout
 The Hinglish time-to-first-audio gap (0.57 s vs 0.43 s) is transliteration on Kaggle's CPU, which runs before synthesis. I added a word cache, so repeated text costs nothing; new words still cost the full time.
 
 Wrote the report, experiment table and sample page.
+
+Later the same day: added speaker-consistency and prosody measurements, and tried to fix names on 20 new held-out name sentences. A lower temperature on name rows, a respelling list, a retry on over-long clips, and a fine-tune with name clips repeated 3× all failed to beat the final model, and respelling made names worse. The final model is unchanged.

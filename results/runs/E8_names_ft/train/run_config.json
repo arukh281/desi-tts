@@ -1,0 +1,25 @@
+{
+  "data": "/kaggle/working/out/e3names/data_names_up",
+  "out": "/kaggle/working/out/e3names/train",
+  "base": "/tmp/xtts_base",
+  "resume": null,
+  "lr": 5e-06,
+  "batch": 2,
+  "grad_accum": 8,
+  "max_steps": 2000,
+  "save_step": 2000,
+  "keep": 1,
+  "eval_step": 200,
+  "fp16": false,
+  "seed": 1234,
+  "milestones": "0.25,0.5,0.75,1.0",
+  "git_sha": "327a4861ddd8d1edcf87e81a86de2e082c27ff2c",
+  "milestone_steps": [
+    500,
+    1000,
+    1500,
+    2000
+  ],
+  "train_clips": 394,
+  "val_clips": 17
+}
