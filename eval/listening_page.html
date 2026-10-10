@@ -1,0 +1,153 @@
+<title>Which Voice Sounds Right?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Literata:opsz,wght@7..72,500;7..72,700&display=swap">
+<style>
+/* Layout: one narrow column of numbered listening cards, built for a phone held in one hand; answers stack under each pair. */
+:root {
+  --paper: #f6f7f4; --card: #ffffff; --ink: #1d2320; --soft: #5d6862;
+  --line: #d9ded8; --accent: #2f6b55; --accent-ink: #ffffff; --chosen: #e3efe9; --warn: #9b4d2b;
+  --display: "Literata", Georgia, serif;
+  --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #141816; --card: #1c211e; --ink: #e8ece9; --soft: #a3aea7;
+  --line: #2f3632; --accent: #7cc4a6; --accent-ink: #0e1512; --chosen: #22352d; --warn: #e5a07f; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #141816; --card: #1c211e; --ink: #e8ece9; --soft: #a3aea7;
+  --line: #2f3632; --accent: #7cc4a6; --accent-ink: #0e1512; --chosen: #22352d; --warn: #e5a07f; color-scheme: dark }
+body { background: var(--paper); color: var(--ink); font: 17px/1.5 var(--body); }
+main { max-width: 38rem; margin: 0 auto; padding-inline: 16px; padding-block: 28px 64px; display: grid; gap: 22px; }
+h1 { font: 700 1.9rem/1.15 var(--display); margin: 0; text-wrap: balance; }
+h2 { font: 500 1.15rem/1.3 var(--display); margin: 0; }
+p { margin: 0; }
+.lede { color: var(--soft); display: grid; gap: 10px; }
+.name { display: grid; gap: 6px; }
+label.small, .small { font-size: .82rem; color: var(--soft); letter-spacing: .02em; }
+input[type=text] { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); }
+.pair { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 14px; }
+.pair header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.num { font: 700 .82rem var(--body); color: var(--accent); letter-spacing: .08em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+.done { font-size: .8rem; color: var(--accent); }
+.said { font: 500 1.05rem/1.4 var(--display); overflow-wrap: anywhere; }
+.clips { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.clip { display: grid; gap: 6px; min-width: 0; }
+.clip b { font-size: .9rem; }
+audio { width: 100%; height: 40px; }
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 6px; }
+legend { font-size: .92rem; padding: 0; margin-bottom: 6px; }
+.choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.choices label { flex: 1 1 5rem; text-align: center; border: 1px solid var(--line); border-radius: 8px; padding: 9px 6px; cursor: pointer; font-size: .92rem; }
+.choices input { position: absolute; opacity: 0; pointer-events: none; }
+.choices input:checked + span { font-weight: 700; }
+.choices label:has(input:checked) { background: var(--chosen); border-color: var(--accent); }
+.choices label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.finish { display: grid; gap: 12px; }
+textarea { width: 100%; min-height: 9rem; font: .85rem/1.45 ui-monospace, Menlo, monospace; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); box-sizing: border-box; }
+button { font: 700 1rem var(--body); padding: 12px 16px; border: 0; border-radius: 10px; background: var(--accent); color: var(--accent-ink); cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.status { font-size: .9rem; color: var(--soft); min-height: 1.4em; }
+.status.warn { color: var(--warn); }
+@media (max-width: 380px) { .clips { grid-template-columns: 1fr; } }
+</style>
+
+<main>
+  <header class="lede">
+    <h1>Which voice sounds right?</h1>
+    <p>You'll hear 22 pairs of clips. Each pair is the same sentence said by two versions of a text-to-speech voice built from Aradhya's recordings. Use headphones if you can. About 10 minutes.</p>
+    <p>For each pair, play A and B, then answer three quick questions. Go with your first impression. There are no right answers, and some pairs may sound very similar.</p>
+  </header>
+
+  <div class="name">
+    <label class="small" for="listener">Your first name</label>
+    <input id="listener" type="text" autocomplete="given-name" placeholder="e.g. Priya">
+  </div>
+
+  <div id="pairs" class="pairs" style="display:grid;gap:18px"></div>
+
+  <section class="finish">
+    <h2>Send your answers</h2>
+    <p class="small">When you've done the pairs, tap Copy and paste the text into WhatsApp to Aradhya.</p>
+    <div class="status" id="progress" aria-live="polite"></div>
+    <button type="button" id="copy">Copy my answers</button>
+    <textarea id="results" readonly aria-label="Your answers as text"></textarea>
+  </section>
+</main>
+
+<script>
+const PAIRS = /*PAIRS*/[];
+const QUESTIONS = [
+  ["nat", "Which sounds more natural?", ["A", "B", "Same"]],
+  ["like", "Which sounds more like Aradhya?", ["A", "B", "Same", "Don't know him"]],
+  ["wa", "Any word wrong or unclear in A?", ["Yes", "No"]],
+  ["wb", "Any word wrong or unclear in B?", ["Yes", "No"]],
+];
+const answers = {};
+const list = document.getElementById("pairs");
+
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+PAIRS.forEach((p, i) => {
+  answers[p.id] = {};
+  const card = document.createElement("article");
+  card.className = "pair";
+  card.innerHTML = `
+    <header><span class="num">Pair ${i + 1} of ${PAIRS.length}</span><span class="done" id="done-${p.id}"></span></header>
+    <p class="said">${esc(p.text)}</p>
+    <div class="clips">
+      <div class="clip"><b>A</b><audio controls preload="none" src="${p.a}"></audio></div>
+      <div class="clip"><b>B</b><audio controls preload="none" src="${p.b}"></audio></div>
+    </div>
+    ${QUESTIONS.map(([key, q, opts]) => `
+      <fieldset>
+        <legend>${q}</legend>
+        <div class="choices">${opts.map(o => `
+          <label><input type="radio" id="${p.id}-${key}-${o.replace(/\W/g, "")}" name="${p.id}-${key}" value="${o}"><span>${o}</span></label>`).join("")}
+        </div>
+      </fieldset>`).join("")}`;
+  card.addEventListener("change", e => {
+    const [, key] = e.target.name.split("-");
+    answers[p.id][key] = e.target.value;
+    const n = Object.keys(answers[p.id]).length;
+    document.getElementById(`done-${p.id}`).textContent = n === QUESTIONS.length ? "Done" : "";
+    update();
+  });
+  list.appendChild(card);
+});
+
+// Only one clip plays at a time.
+document.addEventListener("play", e => {
+  document.querySelectorAll("audio").forEach(a => { if (a !== e.target) a.pause(); });
+}, true);
+
+const code = { "A": "A", "B": "B", "Same": "S", "Don't know him": "X", "Yes": "Y", "No": "N" };
+function resultsText() {
+  const who = document.getElementById("listener").value.trim() || "anonymous";
+  const lines = [`desi-tts listening v1 | ${who}`];
+  PAIRS.forEach(p => {
+    const a = answers[p.id];
+    lines.push(`${p.id} ${QUESTIONS.map(([k]) => `${k}=${a[k] ? code[a[k]] : "-"}`).join(" ")}`);
+  });
+  return lines.join("\n");
+}
+function update() {
+  const complete = PAIRS.filter(p => Object.keys(answers[p.id]).length === QUESTIONS.length).length;
+  const status = document.getElementById("progress");
+  status.textContent = `${complete} of ${PAIRS.length} pairs answered`;
+  status.classList.toggle("warn", complete < PAIRS.length);
+  document.getElementById("results").value = resultsText();
+}
+document.getElementById("listener").addEventListener("input", update);
+document.getElementById("copy").addEventListener("click", async () => {
+  const box = document.getElementById("results");
+  box.value = resultsText();
+  const status = document.getElementById("progress");
+  try {
+    await navigator.clipboard.writeText(box.value);
+    status.textContent = "Copied. Paste it into WhatsApp to Aradhya.";
+  } catch {
+    box.focus(); box.select();
+    status.textContent = "Copy didn't work here. The text is selected: copy it from the box below.";
+  }
+});
+update();
+</script>
