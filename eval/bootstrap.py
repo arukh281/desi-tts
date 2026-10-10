@@ -9,7 +9,7 @@ as real only if its interval excludes 0. Negative = B has lower CER (better).
 Also prints, per category, each system's mean CER across seeds with the
 min-max of the per-seed means as the spread.
 
-Usage:  python eval/bootstrap.py --a E1=final/E1 --b E3=final/E3 [--metric cer]
+Usage:  python eval/bootstrap.py --a E1=final/E1 --b E3=final/E3 [--metric cer] [--group lang=en,category=names]
 """
 import argparse
 import csv
@@ -48,6 +48,8 @@ def main() -> None:
     ap.add_argument("--a", required=True, help="NAME=folder")
     ap.add_argument("--b", required=True, help="NAME=folder")
     ap.add_argument("--metric", default="cer", choices=["cer", "wer"])
+    ap.add_argument("--group", action="append", default=[],
+                    help="extra subset for the interval table, e.g. lang=en,category=names (repeatable)")
     args = ap.parse_args()
     (na, pa), (nb, pb) = (x.split("=", 1) for x in (args.a, args.b))
     sa, sb = load(Path(pa), args.metric), load(Path(pb), args.metric)
@@ -60,6 +62,9 @@ def main() -> None:
     print("|---|---|---|---|---|---|---|")
     groups = {"all": common} | {f"lang={l}": [i for i in common if meta[i]["lang"] == l]
                                 for l in sorted({meta[i]["lang"] for i in common})}
+    for g in args.group:
+        want = dict(kv.split("=", 1) for kv in g.split(","))
+        groups[g] = [i for i in common if all(meta[i][k] == v for k, v in want.items())]
     for label, ids in groups.items():
         if not ids:
             continue

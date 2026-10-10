@@ -1,0 +1,1 @@
+real takes with names: 42 clips, name words missed by Whisper: 13/48 = 0.27
