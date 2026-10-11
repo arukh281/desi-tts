@@ -101,7 +101,7 @@ The listening test was one joint session: three people listened together and agr
 | yes/no questions ending with a rise (seed 1234) | 5/10 | 4/9 | 6/11 |
 | listeners: more natural (16 pairs) | 4 | 11 (1 same) | – |
 
-Counts differ because my real takes are 333 other sentences and unvoiced endings are left out (more of them in E1). Final's spread is half of E1's, and its languages sound more alike than mine. I don't count that as better: every synthetic sentence uses the same reference clips and Hinglish goes through the Hindi path, while real speech changes with the language. Neither model reliably raises yes/no questions, and my own takes rise on only 6 of 11.
+Counts differ because my real takes are 333 other sentences and endings with no voiced pitch are left out (25 statements for E1, 8 for Final). Final's spread is half of E1's, and its languages sound more alike than mine. I don't count that as better: every synthetic sentence uses the same reference clips and Hinglish goes through the Hindi path, while real speech changes with the language. Neither model reliably raises yes/no questions, and my own takes rise on only 6 of 11.
 
 Files: [summary](../results/summary.md), [bootstrap_E1_vs_E3](../results/bootstrap_E1_vs_E3.txt), [bootstrap_E1_vs_Final](../results/bootstrap_E1_vs_Final.txt), [listening](../results/listening_joint_session1.md), [consistency](../results/consistency.md), [prosody](../results/prosody.md)
 
@@ -129,7 +129,7 @@ E3 misses 0.45 of name words against 0.02 of ordinary English words. "Anjali Red
 | Hindi | 2 | 0.041 | 0.065 | +0.024 [+0.017, +0.031] | yes (2 rows) |
 | all names | 13 | 0.107 | 0.095 | −0.012 [−0.115, +0.094] | no |
 
-One of the 8 English rows is the babble. Some error is Whisper's: on my real takes it misses 13 of 48 name words (0.27), about the pretrained model's rate, so E3's extra name errors come from the model. On 20 new held-out name sentences (AI-drafted, like the benchmark), a lower temperature, a respelling list and a fine-tune with name clips repeated 3 times all failed. Final misses 0.34 of name words and they miss 0.37 to 0.46. I wrote the respelling list before any audio was generated, and it covers these names. A babble guard never triggered on this set, so it is untested.
+Some error is Whisper's: on my real takes it misses 13 of 48 name words (0.27), about the pretrained model's rate, so E3's extra name errors come from the model. On 20 new held-out name sentences (AI-drafted, like the benchmark), a lower temperature, a respelling list and a fine-tune with name clips repeated 3 times all failed. Missed name words: 0.34 for the final pipeline ("base" in the results), 0.37 to 0.46 with the fixes. I wrote the respelling list before any audio existed; it covers 27 of the 30 held-out name words. A babble guard never triggered on this set, so it is untested.
 
 Files: [bootstrap_E3_vs_E3_deva](../results/bootstrap_E3_vs_E3_deva.txt), [held-out](../results/bootstrap_E3_heldout_en_vs_E3_heldout_deva.txt), [error_analysis](../results/error_analysis_E3_run1.md), [E3 run 1](../results/runs/E3_run1/bench_norm_on/asr_eval.csv), [names_seen](../results/names_seen.md), [bootstrap_names](../results/bootstrap_names_E1_vs_Final.txt), [names_real](../results/names_real.txt), [EXPERIMENTS.md](EXPERIMENTS.md) (E7, E8)
 

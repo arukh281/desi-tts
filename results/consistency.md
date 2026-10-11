@@ -10,7 +10,7 @@
 | Final | hi | 36 | 0.706 | 0.037 | 0.607 |
 | Final | hinglish | 48 | 0.738 | 0.035 | 0.665 |
 
-### Same voice across languages (cosine between per-language average embeddings)
+### Same voice across languages (cosine between per-language average embeddings; seed-1234 audio: E1 single run, E3 run 1)
 
 | system | en-hi | en-hinglish | hi-hinglish |
 |---|---|---|---|

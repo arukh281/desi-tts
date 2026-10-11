@@ -54,8 +54,10 @@ def measure(items: list[dict]) -> dict:
     commas = sum(it["text"].count(",") for it in comma)
     ends = {}
     for kind in ("statement", "yesno"):
-        s = [v for it in items if it["kind"] == kind and (v := end_slope(it["path"])) is not None]
+        all_kind = [end_slope(it["path"]) for it in items if it["kind"] == kind]
+        s = [v for v in all_kind if v is not None]
         ends[kind] = (sum(v < 0 for v in s) if kind == "statement" else sum(v > 0 for v in s), len(s))
+        ends[kind + "_unvoiced"] = len(all_kind) - len(s)
     return {"rate": statistics.median(rate), "n": len(items), "pauses": len(p), "commas": commas,
             "comma_rows": len(comma), "pause_ms": statistics.median(p) if p else 0.0, "ends": ends}
 
@@ -97,7 +99,9 @@ def main() -> None:
              row("comma sentences: commas / pauses ≥120 ms", lambda r: f"{r['commas']} / {r['pauses']} ({r['comma_rows']} sentences)"),
              row("median pause, ms", lambda r: f"{r['pause_ms']:.0f}"),
              row("statements ending with a fall", lambda r: "{}/{}".format(*r["ends"]["statement"])),
-             row("yes/no questions ending with a rise", lambda r: "{}/{}".format(*r["ends"]["yesno"]))]
+             row("yes/no questions ending with a rise", lambda r: "{}/{}".format(*r["ends"]["yesno"])),
+             row("statements / questions left out (no voiced ending)",
+                 lambda r: f"{r['ends']['statement_unvoiced']} / {r['ends']['yesno_unvoiced']}")]
     text = "\n".join(lines) + "\n"
     (ROOT / "results" / "prosody.md").write_text(text)
     print(text)

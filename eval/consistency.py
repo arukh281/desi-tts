@@ -60,7 +60,7 @@ def main() -> None:
     sets["My real takes"] = {i: args.real / "wavs" / f"{i}.wav" for i in real_lang}
     lang_of = {"E1": bench, "Final": bench, "My real takes": real_lang}
 
-    lines += ["", "### Same voice across languages (cosine between per-language average embeddings)", "",
+    lines += ["", "### Same voice across languages (cosine between per-language average embeddings; seed-1234 audio: E1 single run, E3 run 1)", "",
               "| system | en-hi | en-hinglish | hi-hinglish |", "|---|---|---|---|"]
     for name, files in sets.items():
         by = defaultdict(list)

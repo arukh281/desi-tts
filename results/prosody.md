@@ -7,3 +7,4 @@
 | median pause, ms | 250 | 245 | 300 |
 | statements ending with a fall | 29/41 | 50/58 | 150/185 |
 | yes/no questions ending with a rise | 5/10 | 4/9 | 6/11 |
+| statements / questions left out (no voiced ending) | 25 / 0 | 8 / 1 | 21 / 3 |
