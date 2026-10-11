@@ -66,4 +66,6 @@ The Hinglish time-to-first-audio gap (0.57 s vs 0.43 s) is transliteration on Ka
 
 Wrote the report, experiment table and sample page.
 
-Later the same day: added speaker-consistency and prosody measurements, and tried to fix names on 20 new held-out name sentences. A lower temperature on name rows, a respelling list, a retry on over-long clips, and a fine-tune with name clips repeated 3× all failed to beat the final model, and respelling made names worse. The final model is unchanged.
+Later the same day: added speaker-consistency and prosody measurements, and tried to fix names on 20 new held-out name sentences. A lower temperature on name rows, a respelling list and a fine-tune with name clips repeated 3× all failed to beat the final model, and respelling made names worse. A retry on over-long clips never triggered on that set, so it is untested. The final model is unchanged.
+
+Then final checks before sending: clarified my role in the listening session, broke the names result down by language (English and Hindi name rows got worse, Hinglish ones better), checked the model description against the coqui-tts source, and rewrote the report, experiment table, README and sample page in plainer language. No numbers changed.
