@@ -22,7 +22,7 @@ boot E1_heldout_deva E3_heldout_deva; boot E3_heldout_en E3_heldout_deva; boot E
 boot E2b E3
 "$PY" eval/bootstrap.py --a "E3_deva=$F/E3_heldout_deva" --b "E4=$R/E4/heldout" > results/bootstrap_E3_heldout_deva_vs_E4.txt
 
-G=(--group lang=en,category=names --group lang=en,category=places --group category=names --group lang=hinglish,category=names)
+G=(--group lang=en,category=names --group lang=en,category=places --group category=names --group lang=hinglish,category=names --group lang=hi,category=names)
 for pair in "E1 E3" "E1 Final" "E3 Final"; do
   set -- $pair
   "$PY" eval/bootstrap.py --a "$1=$F/$1" --b "$2=$F/$2" "${G[@]}" > "results/bootstrap_names_${1}_vs_${2}.txt"

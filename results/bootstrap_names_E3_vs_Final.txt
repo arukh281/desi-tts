@@ -11,6 +11,7 @@
 | lang=en,category=places | 6 | 0.043 | 0.043 | +0.000 | [+0.000, +0.000] | no |
 | category=names | 13 | 0.133 | 0.095 | -0.038 | [-0.081, +0.000] | no |
 | lang=hinglish,category=names | 3 | 0.249 | 0.084 | -0.165 | [-0.222, -0.117] | yes |
+| lang=hi,category=names | 2 | 0.065 | 0.065 | +0.000 | [+0.000, +0.000] | no |
 
 ### CER per category: mean over seeds (min-max of per-seed means)
 
