@@ -33,22 +33,22 @@
 <body>
 <main>
 <h1>desi-tts samples</h1>
-<p class="lede">An Indian English, Hindi and Hinglish voice made by fine-tuning XTTS-v2 on 24 minutes of my own recordings.</p>
-<p class="hint"><b>Baseline</b>: pretrained XTTS-v2 cloning my voice from three short reference clips, with my text normaliser. <b>Final</b>: the fine-tuned model (E3, step 1500) with the same normaliser, and Hinglish sent as Devanagari. All clips are synthetic, one take each with seed 1234, not picked for being good. CER is Whisper large-v3's character error rate on that one clip (lower is better). Use headphones if you can.</p>
+<p class="lede">I fine-tuned XTTS-v2 on 24 minutes of my own voice so it speaks Indian English, Hindi and Hinglish. Here is how it sounds next to the model I started from.</p>
+<p class="hint">Baseline is pretrained XTTS-v2 copying my voice from three short reference clips, with my text normaliser. Final is my fine-tuned model (E3, step 1500) with the same normaliser, and with Hinglish sent in Devanagari. Every clip is synthetic, one take with seed 1234, and I didn't pick them for sounding good. CER is Whisper large-v3's character error rate on that one clip, so lower is better. Headphones help.</p>
 
 <h2>The brief's sentences and two Hindi rows</h2>
-<p class="hint">The biggest change is the voice; most of these were already understandable before.</p>
+<p class="hint">The voice is the big change here. Most of these were already easy to understand before.</p>
 {{GOOD}}
 
 <h2>The Hinglish fix</h2>
-<p class="hint">Pretrained XTTS reads Roman-script Hinglish as English and garbles it. Fine-tuning helps a bit; sending the same sentence in Devanagari (transliterated automatically with IndicXlit) fixes most of it. Hinglish CER here is a rough score: Hindi Whisper against AI-drafted Devanagari references (checked by me).</p>
+<p class="hint">Pretrained XTTS reads Roman-script Hinglish as if it were English and garbles it. Fine-tuning helps a bit. Sending the same sentence in Devanagari, converted automatically with IndicXlit, fixes most of it. The Hinglish CER here is rough: Hindi Whisper against AI-drafted Devanagari references that I checked.</p>
 {{HINGLISH}}
 
 <h2>Where it still fails: names</h2>
-<p class="hint">Indian names and places are the main remaining weakness. On these the baseline is often better.</p>
+<p class="hint">Indian names and places are still the weak spot, and on these the baseline is often better.</p>
 {{FAILURES}}
 
-<footer>Full numbers, with 3 seeds and 95% intervals, are in the <a href="https://github.com/arukh281/desi-tts/blob/main/report/REPORT.md">report</a>. Code: <a href="https://github.com/arukh281/desi-tts">github.com/arukh281/desi-tts</a>.</footer>
+<footer>All the numbers, with 3 seeds and 95% intervals, are in the <a href="https://github.com/arukh281/desi-tts/blob/main/report/REPORT.md">report</a>. Code: <a href="https://github.com/arukh281/desi-tts">github.com/arukh281/desi-tts</a>.</footer>
 </main>
 </body>
 </html>

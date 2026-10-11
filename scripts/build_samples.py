@@ -26,9 +26,9 @@ GOOD = ["b005", "b031", "b037", "b045", "b077", "b080"]
 HINGLISH = ["b061", "b063", "b076"]
 FAILURES = ["b009", "b011", "b019"]
 NOTES = {
-    "b009": "Final model babbles: it adds a sentence that isn't there (Whisper: \"...Venkatesh here speaking? My parents would sound quite saluted speaking.\").",
+    "b009": "The final model babbles and adds a sentence that isn't in the text (Whisper heard \"...Venkatesh here speaking? My parents would sound quite saluted speaking.\").",
     "b011": "\"Anjali Reddy\" comes out close to \"and daddy ready\".",
-    "b019": "\"Guwahati\" is mispronounced (Whisper: \"Buahtai\"). The baseline says it better.",
+    "b019": "\"Guwahati\" comes out wrong (Whisper heard \"Buahtai\"). The baseline says it better.",
 }
 
 
