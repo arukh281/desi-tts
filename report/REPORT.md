@@ -37,7 +37,7 @@ I fine-tuned the GPT part of XTTS-v2 on 24 minutes of my own speech and added tw
 
 Final run E3: sessions 1+2 (316 train / 17 val clips), learning rate 5e-6 (the coqui recipe default, low so the model keeps its English and Hindi), batch 2 with gradient accumulation 8 (16 clips per update), a 2000-step target (2054 steps run, 13 epochs), fp32. A step here is one micro-batch of 2 clips, so 2054 steps are about 257 optimizer updates, seed 1234. Milestone weights are kept at 500, 1000, 1500 and 2000 steps ([run_config](../results/runs/E3_run2/train/run_config.json)). The checkpoint is chosen on the 17 val clips only: lowest val loss, among checkpoints whose val CER is within 0.05 of the best and that have no more than 2 extra duration flags. That picked **step 1500**. Step 2000 had the lowest loss but a val CER of 0.135, a sign of babbling ([selection](../results/runs/E3_run2/select/selection.csv)).
 
-**Time.** 2054 steps (median 0.44 s per step), **16.4 minutes** of summed step time on one T4, peak 9.4 GB VRAM ([training](../results/training.md)). The whole Kaggle job took about 50 minutes ([run_info](../results/runs/E3_run2/run_info.json)). I trained E3 twice with the same seed; run 2 gave exactly the same selection table as run 1, so the pick is reproducible ([run 1](../results/runs/E3_run1/select/selection.csv), [run 2](../results/runs/E3_run2/select/selection.csv)).
+**Time.** 2054 steps (median 0.44 s per step), **16.4 minutes** of summed step time on one T4, peak 9.4 GB VRAM ([training](../results/training.md)). I trained E3 twice with the same seed; run 2 gave exactly the same selection table as run 1, so the pick is reproducible ([run 1](../results/runs/E3_run1/select/selection.csv), [run 2](../results/runs/E3_run2/select/selection.csv)).
 
 ## 5. Benchmark and experiments
 
@@ -78,11 +78,11 @@ Final run E3: sessions 1+2 (316 train / 17 val clips), learning rate 5e-6 (the c
 
 Fine-tuning alone (E3 − E1) is −0.041 [−0.083, −0.009] overall and −0.178 [−0.247, −0.118] on Hinglish. By category, E1 → Final: questions 0.291 → 0.026, currency 0.103 → 0.020, dates and times 0.189 → 0.093, numbers 0.169 → 0.105, places 0.073 → 0.091, names 0.107 → 0.095 ([bootstrap_E1_vs_Final](../results/bootstrap_E1_vs_Final.txt)). The names gain comes only from the 3 Hinglish name rows the route fixes (0.355 → 0.084); English name rows get worse ([bootstrap_names](../results/bootstrap_names_E1_vs_Final.txt)).
 
-The real-voice row is my own val recordings with the same Whisper and ECAPA settings: a reference point, not a ceiling (different sentences, 17 clips). English synthetic similarity (0.730) is close to it (0.763); Hindi synthetic is above it (0.706 vs 0.615), probably because synthesis is conditioned on the reference clip.
+The real-voice row is my own val recordings with the same Whisper and ECAPA settings: a reference point, not a ceiling (different sentences, 17 clips). English synthetic similarity (0.730) is close to it (0.763); Hindi synthetic is above it (0.706 vs 0.615).
 
-**Listening test.** One joint session: three people listened together and agreed each answer, so it is one consensus judgement, not three independent ones. The page was blind and in random order: 22 A/B pairs, 16 E1 vs E3, 4 Hinglish Roman vs Devanagari on E3, and 2 repeats with A and B swapped. The E3 audio was from E3 run 1, whose training matches run 2 exactly ([listening](../results/listening_joint_session1.md)).
+**Listening test.** One joint session: three people listened together and agreed each answer, so it is one consensus judgement, not three independent ones. I ran the session and played the clips but didn't answer. I also listened to every benchmark output myself during error analysis. The page was blind and in random order: 22 A/B pairs, 16 E1 vs E3, 4 Hinglish Roman vs Devanagari on E3, and 2 repeats with A and B swapped. The E3 audio was from E3 run 1, whose training matches run 2 exactly ([listening](../results/listening_joint_session1.md)).
 
-Results: more like Aradhya, E3 15 of 16 (1 same, E1 0); more natural, E3 11, E1 4, same 1; a word wrong or unclear, E1 11/16 and E3 9/16; Hinglish Devanagari vs Roman, Devanagari 4/4 on both questions, with a wrong word in Roman 4/4 and Devanagari 1/4; repeated pairs answered the same way 2/2.
+Results: more like Aradhya, E3 15 of 16 (1 same); more natural, E3 11, E1 4, same 1; a word wrong or unclear, E1 11/16 and E3 9/16; Hinglish Devanagari vs Roman, Devanagari 4/4 on both questions, with a wrong word in Roman 4/4 and Devanagari 1/4; repeated pairs answered the same way 2/2.
 
 The voice change is clear. Both systems still get words wrong often, which matches the names result below.
 
@@ -98,7 +98,7 @@ The voice change is clear. Both systems still get words wrong often, which match
 | yes/no questions ending with a rise | 5/10 | 4/9 | 6/11 |
 | listeners: more natural (16 pairs) | 4 | 11 (1 same) | – |
 
-Final is steadier (half the spread across sentences) and nearly one voice across languages, partly because its Hinglish also uses the Hindi path. Its rate and falling statements are close to my real takes. Neither model reliably raises yes/no questions, and my own takes only rise on 6 of 11, so the training data may not teach it. Endings are a 300 ms pyin pitch slope; unvoiced endings are left out.
+Final is steadier (half the spread across sentences), and its three languages sound more alike than my real takes do. That is not better than real speech: every synthetic sentence uses the same reference clips and Hinglish goes through the Hindi path, while real speech naturally varies by language. Its rate and falling statements are close to my real takes. Neither model reliably raises yes/no questions, and my own takes only rise on 6 of 11, so the training data may not teach it.
 
 
 
@@ -115,9 +115,9 @@ Final is steadier (half the spread across sentences) and nearly one voice across
 
 The route gives the intelligibility; fine-tuning gives the voice (with the route fixed, Hinglish similarity 0.676 → 0.738). On E3, the route is worth −0.124 [−0.177, −0.068] on the benchmark and −0.086 [−0.146, −0.034] on the held-out sentences. The held-out check matters because I chose the lexicon while looking at the benchmark rows. Training on Devanagari Hinglish (E4) added nothing.
 
-**Names (not fixed, main weakness).** E3 misses 0.45 of name words, against 0.02 of ordinary English words ([error_analysis](../results/error_analysis_E3_run1.md)): "Anjali Reddy" → "and daddy ready", "Guwahati" → "Buahtai", and one babble after "Venkatesh Iyer" (b009, CER 1.25; [E3 run 1](../results/runs/E3_run1/bench_norm_on/asr_eval.csv)). Seen names are no easier: E3 misses 42% of seen and 41% of unseen name words, the pretrained model 25% and 30% ([names_seen](../results/names_seen.md)). On English name rows fine-tuning made CER worse, 0.030 → 0.106, +0.076 [+0.005, +0.193] (8 rows; the interval only just excludes 0, one row is the babble). Whisper itself misses 13 of 48 name words (0.27) on my real takes ([names_real](../results/names_real.txt)), about the pretrained model's rate, so E3's extra name errors are the model's. Fixes tried on 20 new held-out name sentences all failed: a lower temperature, a respelling list and a babble guard at inference, and a fine-tune with name clips repeated 3× (missed name words 0.34 for Final vs 0.37-0.46; [EXPERIMENTS.md](EXPERIMENTS.md) E7, E8). Numbers and dates the listeners marked wrong had correct normaliser text, so those are delivery ("E M I" heard as "AMI").
+**Names (not fixed, main weakness).** E3 misses 0.45 of name words, against 0.02 of ordinary English words ([error_analysis](../results/error_analysis_E3_run1.md)): "Anjali Reddy" → "and daddy ready", "Guwahati" → "Buahtai", and one babble after "Venkatesh Iyer" (b009, CER 1.25; [E3 run 1](../results/runs/E3_run1/bench_norm_on/asr_eval.csv)). Seen names are no easier (E3 misses 42% of seen and 41% of unseen name words; [names_seen](../results/names_seen.md)). On English name rows fine-tuning made CER worse, 0.030 → 0.106, +0.076 [+0.005, +0.193] (8 rows; the interval only just excludes 0, one row is the babble). Whisper itself misses 13 of 48 name words (0.27) on my real takes ([names_real](../results/names_real.txt)), about the pretrained model's rate, so E3's extra name errors are the model's. On 20 new held-out name sentences (AI-drafted, like the benchmark), a lower temperature, a respelling list (written before any audio was generated, covering these names) and a fine-tune with name clips repeated 3× all failed (missed name words 0.34 for Final vs 0.37-0.46); a babble guard never triggered, so it is untested ([EXPERIMENTS.md](EXPERIMENTS.md) E7, E8). Listener-marked number errors had correct normaliser text, so they are delivery.
 
-## 8. Production
+## 8. Production, limits and next steps
 
 Measured on a T4 for the final pipeline over 176 sentences (the benchmark twice; [latency](../results/runs/extras/latency/profile.json)):
 
@@ -140,6 +140,4 @@ Measured on a T4 for the final pipeline over 176 sentences (the benchmark twice;
 
 Batched throughput isn't measured. **Licence:** XTTS-v2's weights are non-commercial (Coqui Public Model License), and Coqui shut down in January 2024 ([coqui-ai/TTS discussion #4145](https://github.com/coqui-ai/TTS/discussions/4145)), so there is no one to buy a commercial licence from. A real deployment needs a different base model; the pipeline (data, normaliser, Hinglish route, evaluation) carries over.
 
-## 9. Limits and next steps
-
-**Limits:** 24 minutes of one speaker; 12 Hindi rows; Hinglish CER is rough; Whisper misreads names; one consensus listening session. **Next:** new recordings of names and places (respelling and repeating existing clips didn't help); a third, mostly Hindi session; independent listeners; a commercially licensed base model; measured batching, fp16 and IndicXlit on GPU.
+**Limits:** 24 minutes of one speaker; 12 Hindi rows; Hinglish CER is rough; Whisper misreads names; one consensus listening session. **Next:** new name recordings and per-word Devanagari routing for Indian names; a mostly Hindi session; independent listeners; a commercially licensed base; batching and fp16.
